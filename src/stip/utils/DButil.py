@@ -52,7 +52,7 @@ class DBUtil:
       result = self.cursor.fetchone()
       return result[0]
 
-   except Exception as e:
+    except Exception as e:
       print("Fetch Error!")
       print(str(e))
       return False
