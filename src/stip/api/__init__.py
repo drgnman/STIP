@@ -9,8 +9,8 @@ from flask_cors import CORS, cross_origin
 
 # import original moduels
 from stip import app
-from stip.api.topic_management import TopicManagement
-from stip.api.topic import Topic
+from stip.api.Topic import Topic
+from stip.api.TopicManagement import TopicManagement
 
 
 # Class変数として利用するモジュールのインスタンスを作っておく
