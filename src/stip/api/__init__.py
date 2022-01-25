@@ -10,12 +10,15 @@ from flask_cors import CORS, cross_origin
 # import original moduels
 from stip import app
 from stip.api.Topic import Topic
+from stip.api.Data import Data
 from stip.api.TopicManagement import TopicManagement
+from stip.api.DataManagement import DataManagement
 
 
 # Class変数として利用するモジュールのインスタンスを作っておく
 # ここにでインスタンス化するものはモジュール内にself変数を持たない
 topic_management = TopicManagement()
+data_management = DataManagement()
 
 @app.route('/')
 def helloWorld():
@@ -41,10 +44,19 @@ def topicCeate():
 
 @app.route('/publish/post', methods=['POST'])
 def dataPost():
-  request_data = request.get_json()
-  if not (request_data.keys() >= {'Publisher', 'TopicName', 'Elements'}):
+  post_data = request.get_json()
+  if not (post_data.keys() >= {'Publisher', 'TopicName', 'Elements'}):
     return 'Not Found Publisher or Topic or Elements'
 
   # 送信先の対象トピックがstip上に存在するか確認する (TopicManagement.py)
+  if not (topic_management.topicExistCheck(post_data['TopicName'], post_data['Publisher'])):
+    return "Does Not Exist Publisher or Target Topic!"
+  
+  data = Data()
+  data.setDataParameters(post_data)
+  result = data_management.insertToDataValue(data)
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
+
+  return "Success"
+
   # postされた情報を時間及び時空間情報処理によって送信制御するためにデータをストアしておく処理を書く (DataManagement.py)
