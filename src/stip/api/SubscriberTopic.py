@@ -11,7 +11,7 @@ class SubscriberTopic:
         self.detection_range = 0.0
         self.publish_timestamp = ''
 
-    def setSubscriberTopicParameters(self, subscriber_topic):
+    def setParameters(self, subscriber_topic):
         self.subscriber_topic_name = subscriber_topic['SubscriberTopicName']
         self.topic_list = subscriber_topic['TopicList']
         self.extracted_topic_list = subscriber_topic['ExtractedTopicList']
