@@ -7,14 +7,13 @@ class Subscriber:
         self.speed = 0.0
         self.direction = 0.0
 
-    def setSubscriberParameters(self, subscriber):
+    def setParameters(self, subscriber):
         self.subscriber_name = subscriber['SubscriberName']
+        self.purpose = subscriber['Purpose']
         if ("Location" in subscriber):
             self.latitude = subscriber['Location']['Latitude']
             self.longitude = subscriber['Location']['Longitude']
-        
         if ("Speed" in subscriber):
             self.speed = subscriber['Speed']
-
         if ("Direction" in subscriber):
             self.speed = subscriber['Direction']

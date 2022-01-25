@@ -11,7 +11,7 @@ class Topic:       # Topicテーブルに関わる要素を初期化するため
     self.publish_frequency = 0   # 秒で指定
     self.description = ''
 
-  def setTopicParameters(self, create_topic_request):
+  def setParameters(self, create_topic_request):
     self.publisher = create_topic_request['Publisher']
     self.topic_name = create_topic_request['TopicName']
     self.type = create_topic_request['Type']
