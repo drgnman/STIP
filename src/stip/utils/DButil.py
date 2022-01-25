@@ -4,7 +4,7 @@ class DBUtil:
   def __init__(self):
     self.host = 'localhost'
     self.database = 'SDS_SCHEMA'
-    self.user = 'sdsuser',
+    self.user = 'sdsuser'
     self.password = 'sdspassword0'
     self.connector = None
     self.cursor = None
@@ -44,6 +44,7 @@ class DBUtil:
     except Exception as e:
       print("Fetch Error!")
       print(str(e))
+      self.closeDBConnection()
       return False
 
   def fetchSingleQuery(self, sql):
