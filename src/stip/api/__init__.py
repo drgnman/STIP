@@ -13,12 +13,14 @@ from stip.api.Topic import Topic
 from stip.api.Data import Data
 from stip.api.TopicManagement import TopicManagement
 from stip.api.DataManagement import DataManagement
+from stip.api.PublishControl import PublishControl
 
 
 # Class変数として利用するモジュールのインスタンスを作っておく
 # ここにでインスタンス化するものはモジュール内にself変数を持たない
 topic_management = TopicManagement()
 data_management = DataManagement()
+publish_control = PublishControl()
 
 @app.route('/')
 def helloWorld():
@@ -55,6 +57,7 @@ def dataPost():
   data = Data()
   data.setDataParameters(post_data)
   result = data_management.insertToDataValue(data)
+  result = publish_control.publishDirectly(data)
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
 
   return "Success"
