@@ -16,6 +16,7 @@ from stip.api.TopicManagement import TopicManagement
 # Class変数として利用するモジュールのインスタンスを作っておく
 # ここにでインスタンス化するものはモジュール内にself変数を持たない
 topic_management = TopicManagement()
+
 @app.route('/')
 def helloWorld():
   return "Hello World"
@@ -31,4 +32,7 @@ def topicCeate():
   topic.setTopicParameters(create_topic_request)
   # Topicテーブルに対象のトピックレコードを追加
   result = topic_management.create(topic)
-  return "topic: {0} created!!".format(topic.name)
+  if result: 
+    return "topic: {0} created!!".format(topic.name)
+  else:
+    return "Error!!"
