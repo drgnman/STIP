@@ -31,8 +31,10 @@ def topicCeate():
   topic = Topic()
   topic.setTopicParameters(create_topic_request)
   # Topicテーブルに対象のトピックレコードを追加
-  result = topic_management.create(topic)
+  result = topic_management.topicCreate(topic)
+  if not result: return "Create Topic Error!"
+  result = topic_management.elementsSet(topic)
   if result: 
     return "topic: {0} created!!".format(topic.name)
   else:
-    return "Error!!"
+    return "Set Elements Error!!"
