@@ -24,8 +24,8 @@ def helloWorld():
 @app.route('/publish/create', methods=["POST"])
 def topicCeate():
   create_topic_request = request.get_json()
-  if not (create_topic_request.keys() >= {'publisher', 'name', 'elements'}):
-    return 'Not Found Publisher or Name or Elements'
+  if not (create_topic_request.keys() >= {'Publisher', 'TopicName', 'Elements'}):
+    return 'Not Found Publisher or Topic or Elements'
 
   # Topic Createメソッドの呼び出し
   topic = Topic()
@@ -35,6 +35,16 @@ def topicCeate():
   if not result: return "Create Topic Error!"
   result = topic_management.elementsSet(topic)
   if result: 
-    return "topic: {0} created!!".format(topic.name)
+    return "topic: {0} created!!".format(topic.topic_name)
   else:
     return "Set Elements Error!!"
+
+@app.route('/publish/post', methods=['POST'])
+def dataPost():
+  request_data = request.get_json()
+  if not (request_data.keys() >= {'Publisher', 'TopicName', 'Elements'}):
+    return 'Not Found Publisher or Topic or Elements'
+
+  # 送信先の対象トピックがstip上に存在するか確認する (TopicManagement.py)
+  # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
+  # postされた情報を時間及び時空間情報処理によって送信制御するためにデータをストアしておく処理を書く (DataManagement.py)
