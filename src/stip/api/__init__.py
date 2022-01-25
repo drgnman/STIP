@@ -40,9 +40,9 @@ def topicCeate():
   if not result: return "Create Topic Error!"
   result = topic_management.elementsSet(topic)
   if result: 
-    return "topic: {0} created!!".format(topic.topic_name)
+    return "topic: {0} Created!!".format(topic.topic_name)
   else:
-    return "Set Elements Error!!"
+    return "topic Created! But Set Elements Error!!"
 
 @app.route('/publish/post', methods=['POST'])
 def dataPost():
@@ -56,10 +56,16 @@ def dataPost():
   
   data = Data()
   data.setDataParameters(post_data)
-  result = data_management.insertToDataValue(data)
   result = publish_control.publishDirectly(data)
-  # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
+  if not result: return "Exeception Error! Publish Failed"
+  result = data_management.insertToDataValue(data)
+  if result:
+    return "topic:"
 
-  return "Success"
+  # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
+  if result: 
+    return "topic: {0} Published!!".format(data.topic_name)
+  else:
+    return "Published! But Insert Record to the Database Error!!"
 
   # postされた情報を時間及び時空間情報処理によって送信制御するためにデータをストアしておく処理を書く (DataManagement.py)
