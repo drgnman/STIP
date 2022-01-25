@@ -43,5 +43,13 @@ class TopicManagement:
     db.closeDBConnection()
     return result
 
-  def topicExistCheck(self, topic):
-    pass
+  def topicExistCheck(self, topic_name, publisher):
+    db = DBUtil()
+    db.createDBConnection()
+    sql = 'SELECT COUNT(*) FROM TOPIC WHERE TOPIC_NAME = "{0}" AND PUBLISHER = "{1}";'.format(
+      topic_name, publisher
+    )
+    print(sql)
+    result = db.fetchSingleQuery(sql)
+    if (result > 0): return True
+    return False
