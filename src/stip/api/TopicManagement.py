@@ -4,7 +4,7 @@ class TopicManagement:
   def __init__(self):
     pass
 
-  def create(self, topic):
+  def topicCreate(self, topic):
     db = DBUtil()
     db.createDBConnection()
     sql = 'INSERT INTO TOPIC \
@@ -15,4 +15,31 @@ class TopicManagement:
             ) 
     print(sql)
     result  = db.executeQuery(sql)
+    db.closeDBConnection()
+    return result
+  
+  def elementsSet(self, topic):
+    db = DBUtil()
+    db.createDBConnection()
+    for request_element in topic.elements:
+      element = topic.elements[request_element]
+      unit = ''
+      min_value = 0.0
+      max_value = 0.0
+
+      if(type(element) != str):
+       if ('unit' in element.keys()): 
+         unit = element['unit']
+       if ('minValue' in element.keys()): 
+         unit = element['minValue']
+       if ('maxValue' in element.keys()): 
+         unit = element['maxValue']
+
+      sql = 'INSERT INTO ELEMENTS (TOPIC_NAME, ELEMENT_NAME, UNIT, MIN_VALUE, MAX_VALUE) \
+              VALUES ("{0}", "{1}", "{2}", {3}, {4});'.format(
+                topic.name, request_element, unit, min_value, max_value
+              )
+      result = db.executeQuery(sql)
+
+    db.closeDBConnection()
     return result
