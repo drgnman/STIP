@@ -12,7 +12,7 @@ class DataManagement:
 
         # DataValueテーブルへのデータ追加
         sql = "INSERT IGNORE INTO DATA_VALUE_TEMP (TOPIC_NAME, ELEMENT_VALUE) VALUES ('{0}', '{1}');".format(
-            data.topic_name, json.dumps(data.elements)
+            data.topic_name, json.dumps(data.element_values)
         )
         print(sql)
         result = db.executeQuery(sql)
