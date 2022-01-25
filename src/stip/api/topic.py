@@ -1,7 +1,7 @@
 class Topic:       # Topicテーブルに関わる要素を初期化するためのインスタンス変数
   def __init__(self):
     self.publisher = ''
-    self.name = ''
+    self.topic_name = ''
     self.type = ''
     self.latitude = 0.0
     self.longitude = 0.0
@@ -12,20 +12,20 @@ class Topic:       # Topicテーブルに関わる要素を初期化するため
     self.description = ''
 
   def setTopicParameters(self, create_topic_request):
-    self.publisher = create_topic_request['publisher']
-    self.name = create_topic_request['name']
-    self.type = create_topic_request['type']
-    if ('location' in create_topic_request):          # 位置情報の確認
-      self.latitude = create_topic_request['location']['latitude']
-      self.longitude = create_topic_request['location']['longitude']
-    if ('elements' in create_topic_request):          # 要素本体の確認
-      self.elements = create_topic_request['elements']
-    if ('effectiveRange' in create_topic_request):           # effectiveRangeの確認
-      self.effective_range = create_topic_request['effectiveRange']
-    if ('dataTTL' in create_topic_request):           # dataTTLの確認
-      self.data_ttl = create_topic_request['dataTTL']
-    if ('publishFrequency' in create_topic_request):  # publishFrequency(発信頻度)の確認
-      self.publish_frequency = create_topic_request['publishFrequency']
-    if ('description' in create_topic_request):       # 備考の確認
-      self.description = create_topic_request['description']
+    self.publisher = create_topic_request['Publisher']
+    self.topic_name = create_topic_request['TopicName']
+    self.type = create_topic_request['Type']
+    if ('Location' in create_topic_request):          # 位置情報の確認
+      self.latitude = create_topic_request['Location']['Latitude']
+      self.longitude = create_topic_request['Location']['Longitude']
+    if ('Elements' in create_topic_request):          # 要素本体の確認
+      self.elements = create_topic_request['Elements']
+    if ('EffectiveRange' in create_topic_request):           # effectiveRangeの確認
+      self.effective_range = create_topic_request['EffectiveRange']
+    if ('DataTTL' in create_topic_request):           # dataTTLの確認
+      self.data_ttl = create_topic_request['DataTTL']
+    if ('PublishFrequency' in create_topic_request):  # publishFrequency(発信頻度)の確認
+      self.publish_frequency = create_topic_request['PublishFrequency']
+    if ('Description' in create_topic_request):       # 備考の確認
+      self.description = create_topic_request['Description']
 
