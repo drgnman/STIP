@@ -16,4 +16,4 @@ class Subscriber:
         if ("Speed" in subscriber):
             self.speed = subscriber['Speed']
         if ("Direction" in subscriber):
-            self.speed = subscriber['Direction']
+            self.direction = subscriber['Direction']
