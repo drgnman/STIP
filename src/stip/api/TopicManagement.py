@@ -51,5 +51,6 @@ class TopicManagement:
     )
     print(sql)
     result = db.fetchSingleQuery(sql)
+    db.closeDBConnection()
     if (result > 0): return True
     return False
