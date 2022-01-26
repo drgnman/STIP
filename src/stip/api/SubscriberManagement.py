@@ -17,6 +17,7 @@ class SubscriberManagement:
                     subscriber.direction 
                 )
         result = db.executeQuery(sql)
+        db.closeDBConnection()
         return result
     
     # Subscriberクラスを拡張して，そこに"登録用の"SubscriberTopicパラメータを持たせることにした
@@ -57,4 +58,5 @@ class SubscriberManagement:
 
         print(sql)
         result = db.executeQuery(sql)
+        db.closeDBConnection()
         return result
