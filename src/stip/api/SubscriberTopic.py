@@ -23,11 +23,17 @@ class SubscriberTopic:
         if ("ExtractedTopicList" in subscriber_topic):
             self.extracted_topic_list = subscriber_topic['ExtractedTopicList']
         if ("ValueList" in subscriber_topic):
-            self.value_list = ast.literal_eval(subscriber_topic['ValueList'])
+            self.value_list = subscriber_topic['ValueList']
+        if (self.value_list != None):
+            self.value_list = ast.literal_eval(self.value_list)
         if ("VariableList" in subscriber_topic):
-            self.variable_list = ast.literal_eval(subscriber_topic['VariablaList'])
+            self.variable_list = subscriber_topic['VariablaList']
+        if (self.variable_list != None):
+            self.variable_list = ast.literal_eval(self.variable_list)
         if ("ProcedureList" in subscriber_topic):
-            self.procedure_list = ast.literal_eval(subscriber_topic['ProcedureList'])
+            self.procedure_list = subscriber_topic['ProcedureList']
+        if (self.procedure_list != None):
+            self.procedure_list = ast.literal_eval(self.procedure_list)
         if ("ControlMode" in subscriber_topic):
             self.control_mode = subscriber_topic['ControlMode']
         if ("ReceiveFrequency" in subscriber_topic):
@@ -45,8 +51,12 @@ class SubscriberTopic:
         self.subscriber_topic_name = subscriber_topic[0]
         self.topic_list = subscriber_topic[1]
         self.extracted_topic_list = subscriber_topic[2]
-        self.value_list = ast.literal_eval(subscriber_topic[3])
-        self.procedure_list = ast.literal_eval(subscriber_topic[4])
+        self.value_list = subscriber_topic[3]
+        if (self.value_list != None):
+            self.value_list = ast.literal_eval(self.value_list)
+        self.procedure_list = subscriber_topic[4]
+        if (self.procedure_list != None):
+            self.procedure_list = ast.literal_eval(self.procedure_list)
         self.control_mode = subscriber_topic[5]     # 旧 PM_Flag
         self.receive_frequency = subscriber_topic[6]
         self.data_ttr = subscriber_topic[7]
