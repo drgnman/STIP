@@ -81,10 +81,16 @@ def registerSubscriber():
   if not (request_subscriber.keys() >= {'SubscriberName', 'Purpose'}):
     return 'Not Found SubscriberName or Purpose'
   subscriber = Subscriber()
+  # Subscriber情報の設定
   subscriber.setParameters(request_subscriber) 
   # Subscriberの重複チェック -> 存在してた場合は登録しない 
   # 他のユーザが同じ名前で登録しようとしてるかはわからない -> Skip
   result = subscriber_management.registerSubscriber(subscriber)
+  if not result: return "Failed! Subscrbier Cann't Register"
+
+  # SubscribeTopic情報の設定
+  subscriber.setSubscriberTopicParameters(request_subscriber)
+  result = subscriber_management.registerSubscriberTopic(subscriber)
 
   return "Success"
 
