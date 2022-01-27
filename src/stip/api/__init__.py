@@ -67,7 +67,10 @@ def dataPost():
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
   if not result: return "Exeception Error! Publish Failed"
 
+  # DATA_VALUESテーブルへの追加
   result = data_management.insertToDataValue(data)
+  # SUBSCRIBER_TOPICSテーブルへの追加
+  result = data_management.insertToSubscriberTopic(data)
   # postされた情報を時間及び時空間情報処理によって送信制御するためにデータをストアしておく処理を書く (DataManagement.py)
   if result: 
     return "topic: {0} Published!!".format(data.topic_name)
