@@ -38,15 +38,12 @@ class DataManagement:
             # print (subscriber_topic.procedure_list.values())
             for element in subscriber_topic.procedure_list.values():
                 variable_list = element.get('VariableList')
-                print(variable_list)
                 if (variable_list == None): continue
-                print(variable_list)
                 for variable_element in variable_list:
                     if (not self.checkTargetTopicInVariableList(data.topic_name, variable_list[variable_element]['TopicName'])): continue
                     if (variable_element in subscriber_topic.value_list): 
                     # value_listの該当キーに中身がない場合は新しくリストを用意する必要がある
                         if (subscriber_topic.value_list[variable_element] != None):
-                            print("Elements", data.element_values.get(variable_list[variable_element]['Elements']))
                             subscriber_topic.value_list[variable_element].insert(
                                 0, data.element_values.get(variable_list[variable_element]['Elements']))
                             subscriber_topic.value_list[variable_element][-1] = str(datetime.now())
@@ -54,16 +51,13 @@ class DataManagement:
                     else:
                         subscriber_topic.value_list[variable_element] = [data.element_values.get(
                             variable_list[variable_element]['Elements'])]
-                        print("ValueList: ", subscriber_topic.value_list[variable_element])
                     
-            print(subscriber_topic.value_list)
             if (subscriber_topic.value_list == {}): continue
             sql = 'UPDATE SUBSCRIBER_TOPICS SET VALUE_LIST = \'{0}\' WHERE (SUBSCRIBER_TOPIC = "{1}")'.format(
                 json.dumps(subscriber_topic.value_list),
                 subscriber_topic.subscriber_topic_name
             )
             # subscriber_topic単位で最後にVALUE_LIST要素を更新する 
-            print(sql)
             if (db.executeQuery(sql) == False): return False
 
 
