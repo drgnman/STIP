@@ -49,7 +49,6 @@ class TopicManagement:
     sql = 'SELECT COUNT(*) FROM TOPIC WHERE TOPIC_NAME = "{0}" AND PUBLISHER = "{1}";'.format(
       topic_name, publisher
     )
-    print(sql)
     result = db.fetchSingleQuery(sql)
     db.closeDBConnection()
     if (result > 0): return True
