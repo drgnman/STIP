@@ -20,4 +20,6 @@ class PeriodicPublishBySubscriberTopic:
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
             print(subscriber_topic)
+            # 集計処理及び
+            # パブリッシュの処理を書いていく
 
