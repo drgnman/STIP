@@ -28,8 +28,8 @@ class DataManagement:
         db.createDBConnection()
 
         sql = 'SELECT SUBSCRIBER_TOPIC, PROCEDURE_LIST, VALUE_LIST FROM SUBSCRIBER_TOPICS;'
-        resultSet = db.fetchAllQuery(sql)
-        for result in resultSet:
+        result_set = db.fetchAllQuery(sql)
+        for result in result_set:
             subscriber_topic = SubscriberTopic()
             subscriber_topic.subscriber_topic_name = result[0]
             if (result[1] != None) : subscriber_topic.procedure_list = ast.literal_eval(result[1])
