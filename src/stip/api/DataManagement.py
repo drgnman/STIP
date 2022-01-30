@@ -59,6 +59,7 @@ class DataManagement:
             )
             # subscriber_topic単位で最後にVALUE_LIST要素を更新する 
             if (db.executeQuery(sql) == False): return False
+        return True
 
 
     def checkTargetTopicInVariableList(self, topic_name, variable_element):
