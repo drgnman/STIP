@@ -78,9 +78,15 @@ class PublishControl:
                         topic_list = topic_list.replace("'", "")
                         topic_list = topic_list.replace(" ", "")
                         topic_list = topic_list.split(',')
+                        # 完全一致検索
+                        publish_topic_category = data.topic_name.split("_")[-1]
                         if (data.topic_name in topic_list):
                             # 送信先としてここで必要なのはSubscriber-topic名だけ
                             target_subscribers.append(result[0])
+                        # 部分一致検索 topic名の末尾が種類を示すルールであることから，末尾から種類だけを切り取った 
+                        elif (publish_topic_category in topic_list):
+                            target_subscribers.append(result[0])
+
         
         # print(target_subscribers)
         for target in target_subscribers:
