@@ -57,7 +57,11 @@ class ProcedureProcessing:
         if bool(pattern_aggregation.search(operator)):
             return self.math_operator.callAggregation(operator, values)
         elif bool(pattern_query.search(operator)):
-            return self.math_operator.callQuery(operator, values)
+            resultSet = self.math_operator.callQuery(operator, values)
+            if (resultSet == []): return resultSet
+            resultSet = list(resultSet[0])
+            resultSet[1] = str(resultSet[1])
+            return resultSet
         else:
             return self.math_operator.callCalculate(operator, values[0], values[1])
 
