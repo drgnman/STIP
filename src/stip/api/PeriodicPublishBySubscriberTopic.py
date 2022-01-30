@@ -32,7 +32,15 @@ class PeriodicPublishBySubscriberTopic:
 
             # Procedureに記載された処理の実行
 
+    # aggegationを含まないシンプルな送信制御モード
+    def publishForModePeriodic(self, subscrbier_topic):
+        pass
 
+    # 位置情報を用いた送信制御モード
+    def publishForModeDynmaic(self, subscrbier_topic):
+        pass
+
+    # aggregationを用いた送信制御モード
     def publishForModePeriodicAggregation(self, subscriber_topic):
         publish_contents = {}
         for topic_name in subscriber_topic.procedure_list:
