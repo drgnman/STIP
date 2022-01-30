@@ -100,3 +100,13 @@ class MathOperator:
             return True
         except ValueError:
             return False
+
+    def calculateDistance(self, base_latitude, base_longitude, latitude, longitude):
+        distance = 6371 * math.acos(
+            math.cos(math.radians(base_latitude))
+            * math.cos(math.radians(latitude))
+            * math.cos(math.radians(longitude) - math.radians(base_longitude))
+            + math.sin(math.radians(base_latitude))
+            * math.sin(math.radians(latitude))
+        )
+        return distance
