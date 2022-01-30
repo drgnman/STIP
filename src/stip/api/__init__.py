@@ -63,15 +63,19 @@ def dataPost():
   
   data = Data()
   data.setParameters(post_data)
+  # 最終的に送信する中身はelements_valueだけ(topicは宛先指定に使われる),
+  # サブスクライバがなんのデータかわかるようにelements_valueにTopicNameデータを追加する
+  data.element_values["TopicName"] = data.topic_name
   result = publish_control.publishDirectly(data)
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
+  result =publish_control.publishByDynamicTopicOptimization(data)
   if not result: return "Exeception Error! Publish Failed"
 
   # DATA_VALUESテーブルへの追加
   result = data_management.insertToDataValue(data)
   # SUBSCRIBER_TOPICSテーブルへの追加
-  result = data_management.insertToSubscriberTopic(data)
   # postされた情報を時間及び時空間情報処理によって送信制御するためにデータをストアしておく処理を書く (DataManagement.py)
+  result = data_management.insertToSubscriberTopic(data)
   if result: 
     return "topic: {0} Published!!".format(data.topic_name)
   else:
