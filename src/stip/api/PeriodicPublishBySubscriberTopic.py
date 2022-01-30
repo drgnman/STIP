@@ -24,46 +24,52 @@ class PeriodicPublishBySubscriberTopic:
             subscriber_topic.setParameterFromList(record)
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
+            if (subscriber_topic.control_mode == "Aggregation"):
+                result = self.publishForModePeriodicAggregation(subscriber_topic)
+                print(result)
             # パブリッシュの処理を書いていく
             # ここに最後パブリッシュ内容をまとめて，最後にパブリッシュ
-            publish_contents = {}
 
             # Procedureに記載された処理の実行
-            for topic_name in subscriber_topic.procedure_list:
-                procedure = subscriber_topic.procedure_list[topic_name]['Procedure']
-                if ("VariableList" in subscriber_topic.procedure_list[topic_name]):
-                    variable_list = subscriber_topic.procedure_list[topic_name]['VariableList']
-                operators = self.procedureProcessing.procedureSplit(procedure)
-                for operator in operators:
-                    # operatorを参考に計算する箇所の切り出し
-                    target_formula = self.procedureProcessing.extractTargetFormulaPart(
-                        operator, procedure
-                        )
-                    # 切り出した要素から計算及び，元テキスト書き換えのための要素取り出し
-                    if (operator != "Hot"):
-                        rewrite_elements = self.procedureProcessing.splitEachElementFromTargetFormula(
-                            target_formula, subscriber_topic.value_list)  # 要素数0~2の配列が返ってくる
-                    else:
-                        rewrite_elements = target_formula
 
-                    # 計算処理
-                    processingResult = self.procedureProcessing.calcurateFromProcedure(
-                        operator, rewrite_elements
-                        )
-                    # 結果を用いてprocedure本体を書き換える
-                    procedure = self.rewriteProcedureByCulculatedResult(
-                        operator, procedure, target_formula, processingResult 
-                        )
-                publish_contents[topic_name] = [procedure, str(datetime.now())]
-                
-            # 完成したデータとトピック名をDataオブジェクトに格納してIoTプラットフォームにPublish
-            publish_data = Data()
-            publish_data.topic_name = subscriber_topic.subscriber_topic_name
-            publish_data.element_values = publish_contents
-            print(publish_data.element_values)
 
-            result = self.publish_control.publishDirectly(publish_data)
-            print(result)
+    def publishForModePeriodicAggregation(self, subscriber_topic):
+        publish_contents = {}
+        for topic_name in subscriber_topic.procedure_list:
+            procedure = subscriber_topic.procedure_list[topic_name]['Procedure']
+            if ("VariableList" in subscriber_topic.procedure_list[topic_name]):
+                variable_list = subscriber_topic.procedure_list[topic_name]['VariableList']
+            operators = self.procedureProcessing.procedureSplit(procedure)
+            for operator in operators:
+                # operatorを参考に計算する箇所の切り出し
+                target_formula = self.procedureProcessing.extractTargetFormulaPart(
+                    operator, procedure
+                    )
+                # 切り出した要素から計算及び，元テキスト書き換えのための要素取り出し
+                if (operator != "Hot"):
+                    rewrite_elements = self.procedureProcessing.splitEachElementFromTargetFormula(
+                        target_formula, subscriber_topic.value_list)  # 要素数0~2の配列が返ってくる
+                else:
+                    rewrite_elements = target_formula
+
+                # 計算処理
+                processingResult = self.procedureProcessing.calcurateFromProcedure(
+                    operator, rewrite_elements
+                    )
+                # 結果を用いてprocedure本体を書き換える
+                procedure = self.rewriteProcedureByCulculatedResult(
+                    operator, procedure, target_formula, processingResult 
+                    )
+            publish_contents[topic_name] = [procedure, str(datetime.now())]
+        
+        # 完成したデータとトピック名をDataオブジェクトに格納してIoTプラットフォームにPublish
+        publish_data = Data()
+        publish_data.topic_name = subscriber_topic.subscriber_topic_name
+        publish_data.element_values = publish_contents
+        print(publish_data.element_values)
+
+        result = self.publish_control.publishDirectly(publish_data)
+        return result
 
     def rewriteProcedureByCulculatedResult(self, operator, procedure, target_formula, result):
         replace_target = "{0}({1})".format(operator, target_formula)
