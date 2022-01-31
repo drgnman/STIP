@@ -28,7 +28,10 @@ class Subscriber:
     def setSubscriberTopicParameters(self, subscriber):
         # "登録用の"SubscriberTopic要素
         self.topic_list = subscriber['TopicList']
-        self.receive_frequency = subscriber['ReceiveFrequency']
+        if ("ReceiveFrequency" in subscriber):
+            self.receive_frequency = subscriber['ReceiveFrequency']
         self.control_mode = subscriber['ControlMode']
-        self.detection_range = subscriber['DetectionRange']
-        self.data_ttr = subscriber['DataTTR']
+        if ("DetectionRange" in subscriber):
+            self.detection_range = subscriber['DetectionRange']
+        if ("DataTTR" in subscriber):
+            self.data_ttr = subscriber['DataTTR']
