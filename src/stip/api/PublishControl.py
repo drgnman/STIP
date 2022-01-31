@@ -1,4 +1,5 @@
 from stip.utils.DBUtil import DBUtil
+from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.utils.MathOperator import MathOperator
 from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.api.BaseTopicForDTOS import  BaseTopicForDTOS
@@ -75,9 +76,7 @@ class PublishControl:
                         result = list(result)
                         # DBからの戻り値がtupleで中身は全てstr扱いのため，リストに変換する
                         topic_list = result[1][1:-1]
-                        topic_list = topic_list.replace("'", "")
-                        topic_list = topic_list.replace(" ", "")
-                        topic_list = topic_list.split(',')
+                        topic_list = self.processing_supports.convertFromStrToList(topic_list) 
                         # 完全一致検索
                         publish_topic_category = data.topic_name.split("_")[-1]
                         if (data.topic_name in topic_list):
