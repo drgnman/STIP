@@ -27,22 +27,20 @@ class SubscriberManagement:
         db = DBUtil()
         db.createDBConnection()
         # TopicNameが固定の名称である前提
-        topic_name_list = list(subscriber.topic_list.keys())
         # 周期配信の場合はDetectionRangeは不要
         if (subscriber.control_mode == "Periodic"):
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
-                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
-                        PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR) VALUES \
-                    ("{0}", "{1}", "{2}" , \'{3}\', "{4}", "{5}", "{6}");'.format(
+                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
+                        PM_FLAG, RECEIVE_FREQUENCY) VALUES \
+                    ("{0}", "{1}", "{2}" , "{3}", "{4}");'.format(
                         subscriber.subscriber_name + "_" +subscriber.purpose, 
                         subscriber.topic_list, 
-                        ''
                         '',
                         subscriber.control_mode,
-                        subscriber.receive_frequency,
-                        '0.0'
+                        subscriber.receive_frequency
                     )
         elif (subscriber.control_mode == "Aggregation"):
+            topic_name_list = list(subscriber.topic_list.keys())
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                     (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
                         PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR) VALUES \
