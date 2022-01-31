@@ -49,16 +49,20 @@ class PeriodicPublishBySubscriberTopic:
     # aggegationを含まないシンプルな送信制御モード
     def publishForModePeriodic(self, subscriber_topic):
         topic_list = subscriber_topic.topic_list[1:-1]
-        topic_list = self.processing_supports(topic_list)
+        topic_list = self.processing_supports.convertFromStrToList(topic_list)
         publish_contents = {}
-        for topic_name in subscriber_topic.topic_list:
+        for topic_name in topic_list:
+            print(topic_name)
             self.db.createDBConnection()
-            sql = 'SELECT TOPIC_NAME, ELEMENT_VALUE, PULISH_TIMESTAMP \
+            sql = 'SELECT TOPIC_NAME, ELEMENT_VALUE, PUBLISH_TIMESTAMP \
                     FROM DATA_VALUE_TEMP WHERE TOPIC_NAME = "{0}" ORDER BY PUBLISH_TIMESTAMP DESC LIMIT 1;'.format(
                         topic_name
                     )
+            print(sql)
             result_set = self.db.fetchAllQuery(sql)
-            publish_contents[topic_name] = result_set[0]
+            print(result_set)
+            if (result_set != []):
+                publish_contents[topic_name] = result_set[0]
         self.db.closeDBConnection()
         return publish_contents
         
