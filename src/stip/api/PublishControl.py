@@ -61,6 +61,7 @@ class PublishControl:
             subscribers_distance_information_list[subscriber[0]] = distance
         
         target_subscribers = []
+        publish_topic_category = data.topic_name.split("_")[-1]
         for subscriber, distance in subscribers_distance_information_list.items():
             # subscriber名の部分一致とPM_FLAG == "Dynamic" 
             # distance < detection_rangeを条件にSELECTクエリを発行すればいいのでは？
@@ -78,7 +79,6 @@ class PublishControl:
                         topic_list = result[1][1:-1]
                         topic_list = self.processing_supports.convertFromStrToList(topic_list) 
                         # 完全一致検索
-                        publish_topic_category = data.topic_name.split("_")[-1]
                         if (data.topic_name in topic_list):
                             # 送信先としてここで必要なのはSubscriber-topic名だけ
                             target_subscribers.append(result[0])
@@ -92,3 +92,5 @@ class PublishControl:
             # 送信する先のtopic_name = Subscriber_topicを意味する
             data.topic_name = target
             self.publishDirectly(data)
+        
+        return True 
