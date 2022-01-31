@@ -57,13 +57,12 @@ class SubscriberManagement:
             # それ以外の場合にはDetectionRangeも設定
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                     (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
-                        PM_FLAG, RECEIVE_FREQUENCY, DETECTION_RANGE) VALUES \
-                    ("{0}", "{1}", "{2}" , "{3}", "{4}", "{5}");'.format(
+                        PM_FLAG, DETECTION_RANGE) VALUES \
+                    ("{0}", "{1}", "{2}" , "{3}", "{4}");'.format(
                         subscriber.subscriber_name + "_" + subscriber.purpose, 
                         subscriber.topic_list,
                         '',
                         subscriber.control_mode,
-                        subscriber.receive_frequency,
                         subscriber.detection_range
                     )
         else:
