@@ -85,7 +85,7 @@ def dataPost():
 def registerSubscriber():
   request_subscriber = request.get_json()
   # Subscriberとして最低限必要な要素のキーチェック
-  if not (request_subscriber.keys() >= {'SubscriberName', 'Purpose'}):
+  if not (request_subscriber.keys() >= {'SubscriberName', 'Purpose', 'ControlMode'}):
     return 'Not Found SubscriberName or Purpose'
   subscriber = Subscriber()
   # Subscriber情報の設定
