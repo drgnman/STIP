@@ -29,8 +29,20 @@ class SubscriberManagement:
         # TopicNameが固定の名称である前提
         topic_name_list = list(subscriber.topic_list.keys())
         # 周期配信の場合はDetectionRangeは不要
-        not_use_location_pattern = re.compile(r'\b(Period|Aggregation)\b') 
-        if (bool(not_use_location_pattern.search(subscriber.control_mode))):
+        if (subscriber.control_mode == "Periodic"):
+            sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
+                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
+                        PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR) VALUES \
+                    ("{0}", "{1}", "{2}" , \'{3}\', "{4}", "{5}", "{6}");'.format(
+                        subscriber.subscriber_name + "_" +subscriber.purpose, 
+                        subscriber.topic_list, 
+                        ''
+                        '',
+                        subscriber.control_mode,
+                        subscriber.receive_frequency,
+                        '0.0'
+                    )
+        elif (subscriber.control_mode == "Aggregation"):
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                     (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
                         PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR) VALUES \
@@ -42,6 +54,21 @@ class SubscriberManagement:
                         subscriber.control_mode,
                         subscriber.receive_frequency,
                         subscriber.data_ttr
+                    )
+        elif(subscriber.control_mode == "Dynamic"):
+            # それ以外の場合にはDetectionRangeも設定
+            sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
+                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
+                        PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR, DETECTION_RANGE) VALUES \
+                    ("{0}", "{1}", "{2}" , \'{3}\', "{4}", "{5}", "{6}", "{7}");'.format(
+                        subscriber.subscriber_name + "_" + subscriber.purpose, 
+                        subscriber.topic_list,
+                        '',
+                        '',
+                        subscriber.control_mode,
+                        subscriber.receive_frequency,
+                        '',
+                        subscriber.detection_range
                     )
         else:
             # それ以外の場合にはDetectionRangeも設定
