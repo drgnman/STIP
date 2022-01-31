@@ -6,38 +6,65 @@ from stip.api.PeriodicControl import PeriodicControl
 from stip.api.PublishControl import PublishControl
 from stip.api.SubscriberTopic import SubscriberTopic
 from stip.api.ProcedureProcessing import ProcedureProcessing
+from stip.utils.ProccessingSupports import ProcessingSupports
 
 class PeriodicPublishBySubscriberTopic:
     def __init__(self):
+        self.db = DBUtil()
         self.procedureProcessing = ProcedureProcessing()
         self.periodic_control = PeriodicControl()
         self.publish_control = PublishControl()
+        self.processing_supports = ProcessingSupports()
 
     def PublishBySubscriberTopic(self):
-        db = DBUtil()
-        db.createDBConnection()
+        self.db.createDBConnection()
         sql = 'SELECT * FROM SUBSCRIBER_TOPICS;'
-        all_subscriber_topic_list = db.fetchAllQuery(sql)
-
+        all_subscriber_topic_list = self.db.fetchAllQuery(sql)
+        self.db.closeDBConnection()
         for record in all_subscriber_topic_list:
             subscriber_topic = SubscriberTopic()
             subscriber_topic.setParameterFromList(record)
+            publish_contents = {}
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
-            if (subscriber_topic.control_mode == "Aggregation"):
-                result = self.publishForModePeriodicAggregation(subscriber_topic)
-                print(result)
-            # パブリッシュの処理を書いていく
-            # ここに最後パブリッシュ内容をまとめて，最後にパブリッシュ
+            if (subscriber_topic.control_mode == "Periodic"):
+                publish_contents = self.publishForModePeriodic(subscriber_topic)
+                print(publish_contents)
+            elif (subscriber_topic.control_mode == "Aggregation"):
+                publish_contents = self.publishForModePeriodicAggregation(subscriber_topic)
+                print(publish_contents)
+            elif (subscriber_topic.control_mode == "Periodic Dynamic"):
+                publish_contents = self.publishForModePeriodicAndDynamic(subscriber_topic)
+                print(publish_contents)
 
-            # Procedureに記載された処理の実行
+            if (publish_contents == {}): continue
+            # 完成したデータとトピック名をDataオブジェクトに格納してIoTプラットフォームにPublish
+            publish_data = Data()
+            publish_data.topic_name = subscriber_topic.subscriber_topic_name
+            publish_data.element_values = publish_contents
+            print(publish_data.element_values)
+            result = self.publish_control.publishDirectly(publish_data)
+        return result
 
     # aggegationを含まないシンプルな送信制御モード
-    def publishForModePeriodic(self, subscrbier_topic):
-        pass
+    def publishForModePeriodic(self, subscriber_topic):
+        topic_list = subscriber_topic.topic_list[1:-1]
+        topic_list = self.processing_supports(topic_list)
+        publish_contents = {}
+        for topic_name in subscriber_topic.topic_list:
+            self.db.createDBConnection()
+            sql = 'SELECT TOPIC_NAME, ELEMENT_VALUE, PULISH_TIMESTAMP \
+                    FROM DATA_VALUE_TEMP WHERE TOPIC_NAME = "{0}" ORDER BY PUBLISH_TIMESTAMP DESC LIMIT 1;'.format(
+                        topic_name
+                    )
+            result_set = self.db.fetchAllQuery(sql)
+            publish_contents[topic_name] = result_set[0]
+        self.db.closeDBConnection()
+        return publish_contents
+        
 
     # 位置情報を用いた送信制御モード
-    def publishForModeDynmaic(self, subscrbier_topic):
+    def publishForModePeriodicAndDynamic(self, subscrbier_topic):
         pass
 
     # aggregationを用いた送信制御モード
@@ -69,15 +96,9 @@ class PeriodicPublishBySubscriberTopic:
                     operator, procedure, target_formula, processingResult 
                     )
             publish_contents[topic_name] = [procedure, str(datetime.now())]
+        return publish_contents
         
-        # 完成したデータとトピック名をDataオブジェクトに格納してIoTプラットフォームにPublish
-        publish_data = Data()
-        publish_data.topic_name = subscriber_topic.subscriber_topic_name
-        publish_data.element_values = publish_contents
-        print(publish_data.element_values)
-
-        result = self.publish_control.publishDirectly(publish_data)
-        return result
+        
 
     def rewriteProcedureByCulculatedResult(self, operator, procedure, target_formula, result):
         replace_target = "{0}({1})".format(operator, target_formula)
