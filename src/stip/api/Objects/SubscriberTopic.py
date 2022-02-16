@@ -12,6 +12,7 @@ class SubscriberTopic:
         self.receive_frequency = ''
         self.data_ttr = 0
         self.detection_range = 0.0
+        self.driving_infomation_list = ''
         self.publish_timestamp = ''
         self.create_timestamp = ''
 
@@ -42,6 +43,8 @@ class SubscriberTopic:
             self.data_ttr = subscriber_topic['DataTTR']
         if ("DetectionRange" in subscriber_topic):
             self.detection_range = subscriber_topic['DetectionRange']
+        if ("DrivingInformationList" in subscriber_topic):
+            self.driving_infomation_list = subscriber_topic['DrivingInformationList']
         if ("PublishTimestamp" in subscriber_topic):
             self.publish_timestamp = subscriber_topic['PublishTimestamp']
         if ("CreateTimestamp" in subscriber_topic):
@@ -63,3 +66,4 @@ class SubscriberTopic:
         self.detection_range = subscriber_topic[8]
         self.publish_timestamp = subscriber_topic[9]
         self.create_timestamp = subscriber_topic[10]
+        self.driving_infomation_list = subscriber_topic[11] # 仮置き
