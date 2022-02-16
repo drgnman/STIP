@@ -5,7 +5,7 @@ import ast
 from pyrsistent import CheckedValueTypeError
 
 from stip.utils.DBUtil import DBUtil
-from stip.api.SubscriberTopic import SubscriberTopic
+from stip.api.Objects.SubscriberTopic import SubscriberTopic
 
 class DataManagement:
     def __init__(self):
