@@ -1,6 +1,9 @@
 import numpy as np
 import statistics
 import math
+import pyproj
+
+from torch import long
 
 from stip.utils.DBUtil import DBUtil
 
@@ -101,12 +104,24 @@ class MathOperator:
         except ValueError:
             return False
 
-    def calculateDistance(self, base_latitude, base_longitude, latitude, longitude):
-        distance = 6371 * math.acos(
-            math.cos(math.radians(base_latitude))
-            * math.cos(math.radians(latitude))
-            * math.cos(math.radians(longitude) - math.radians(base_longitude))
-            + math.sin(math.radians(base_latitude))
-            * math.sin(math.radians(latitude))
-        )
-        return distance
+    # 測地系が古い可能性がある．Pyprojでやるのが正しそうだが，一応のこす
+    # def calculateDistance(self, base_latitude, base_longitude, latitude, longitude):
+    #     distance = 6371 * math.acos(
+    #         math.cos(math.radians(base_latitude))
+    #         * math.cos(math.radians(latitude))
+    #         * math.cos(math.radians(longitude) - math.radians(base_longitude))
+    #         + math.sin(math.radians(base_latitude))
+    #         * math.sin(math.radians(latitude))
+    #     )
+    #     return distance
+    
+    # こっちで大替できるかも
+    # flagにして，戻り値を設定させられればより良い
+
+    def calculateGeoInformation(self, base_latitude, base_longitude, latitude, longitude, flag):
+        grs80 = pyproj.Geod(ellps='GRS80')
+        azimuth, bkw_azimuth, distance = grs80.inv(base_longitude, base_latitude, longitude, latitude)
+        if (flag == "distance"):
+            return distance
+        if (flag == "azimuth"):
+            return azimuth
