@@ -12,6 +12,7 @@ class Subscriber:
         self.receive_frequency = ''
         self.control_mode = ''     # Database嬢はPM_FLAG ("Contronlの手段を管理する")
         self.detection_range = 0.0
+        self.moving_information_list = {}
         self.data_ttr = 0       # 秒単位
 
     def setParameters(self, subscriber):
@@ -33,5 +34,7 @@ class Subscriber:
         self.control_mode = subscriber['ControlMode']
         if ("DetectionRange" in subscriber):
             self.detection_range = subscriber['DetectionRange']
+        if ("MovingInformationList" in subscriber):
+            self.moving_information_list = subscriber['MovingInformationList']
         if ("DataTTR" in subscriber):
             self.data_ttr = subscriber['DataTTR']
