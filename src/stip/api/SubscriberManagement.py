@@ -65,22 +65,20 @@ class SubscriberManagement:
                         subscriber.control_mode,
                         subscriber.detection_range
                     )
-        elif(subscriber.control_mode == "Dynamic Period"):
+        elif(subscriber.control_mode == "Periodic_Dynamic"):
             # それ以外の場合にはDetectionRangeも設定
             # (Aggregation Dynamic?)
-            topic_name_list = list(subscriber.topic_list.keys())
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
-                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, PROCEDURE_LIST, \
-                        PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR, DRIVING_INFORMATION_LIST,DETECTION_RANGE) VALUES \
-                    ("{0}", "{1}", "{2}" , \'{3}\', "{4}", "{5}", "{6}", "{7}","{8}");'.format(
+                    (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
+                        PM_FLAG, RECEIVE_FREQUENCY, DATA_TTR, MOVING_INFORMATION_LIST, DETECTION_RANGE) VALUES \
+                    ("{0}", "{1}", "{2}" , "{3}", "{4}", "{5}", \'{6}\', "{7}");'.format(
                         subscriber.subscriber_name + "_" + subscriber.purpose, 
-                        topic_name_list, 
-                        topic_name_list,
-                        json.dumps(subscriber.topic_list),
+                        subscriber.topic_list,
+                        '',
                         subscriber.control_mode,
                         subscriber.receive_frequency,
                         subscriber.data_ttr,
-                        subscriber.driving_information_list, # 何型で突っ込むか考える(json?)
+                        json.dumps(subscriber.moving_information_list),
                         subscriber.detection_range
                     )
 
