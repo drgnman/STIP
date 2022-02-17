@@ -33,7 +33,7 @@ class PeriodicPublishBySubscriberTopic:
             elif (subscriber_topic.control_mode == "Aggregation"):
                 publish_contents = self.publishForModePeriodicAggregation(subscriber_topic)
                 print(publish_contents)
-            elif (subscriber_topic.control_mode == "Periodic Dynamic"):
+            elif (subscriber_topic.control_mode == "Periodic_Dynamic"):
                 publish_contents = self.publishForModePeriodicAndDynamic(subscriber_topic)
                 print(publish_contents)
 
@@ -42,7 +42,7 @@ class PeriodicPublishBySubscriberTopic:
             publish_data = Data()
             publish_data.topic_name = subscriber_topic.subscriber_topic_name
             publish_data.element_values = publish_contents
-            print(publish_data.element_values)
+            # 今今は各レコード単位で送信処理してるけど，まとめて最後にpublishした方がいいか？
             result = self.publish_control.publishDirectly(publish_data)
         return result
 
@@ -69,6 +69,7 @@ class PeriodicPublishBySubscriberTopic:
 
     # 位置情報を用いた送信制御モード
     def publishForModePeriodicAndDynamic(self, subscrbier_topic):
+        # 送信周期が一致しているものに対しての処理
         pass
 
     # aggregationを用いた送信制御モード
