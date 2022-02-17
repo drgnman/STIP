@@ -55,8 +55,8 @@ class PublishControl:
 
         subscribers_distance_information_list = {} 
         for subscriber in all_subscribers:
-            distance = self.math_operator.calculateDistance(
-                base_topic.latitude, base_topic.longitude, subscriber[1], subscriber[2])
+            distance = self.math_operator.calculateGeoInformation(
+                base_topic.latitude, base_topic.longitude, subscriber[1], subscriber[2], "distance")
             # effective_rangeよりもdetection_rengeに収まっているかどうかが大事
             subscribers_distance_information_list[subscriber[0]] = distance
         
