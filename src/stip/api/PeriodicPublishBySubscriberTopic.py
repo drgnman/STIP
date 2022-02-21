@@ -4,6 +4,7 @@ from stip.api import ProcedureProcessing
 from stip.utils.DBUtil import DBUtil
 from stip.api.PeriodicControl import PeriodicControl
 from stip.api.PublishControl import PublishControl
+from stip.api.common.CommonStrings import CommonStrings
 from stip.api.objects.SubscriberTopic import SubscriberTopic
 from stip.api.ProcedureProcessing import ProcedureProcessing
 from stip.utils.ProccessingSupports import ProcessingSupports
@@ -15,6 +16,7 @@ class PeriodicPublishBySubscriberTopic:
         self.periodic_control = PeriodicControl()
         self.publish_control = PublishControl()
         self.processing_supports = ProcessingSupports()
+        self.common_strings = CommonStrings()
 
     def PublishBySubscriberTopic(self):
         self.db.createDBConnection()
@@ -27,13 +29,13 @@ class PeriodicPublishBySubscriberTopic:
             publish_contents = {}
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
-            if (subscriber_topic.control_mode == "Periodic"):
+            if (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_PERIODIC):
                 publish_contents = self.publishForModePeriodic(subscriber_topic)
                 print(publish_contents)
-            elif (subscriber_topic.control_mode == "Aggregation"):
+            elif (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_AGGREGATION):
                 publish_contents = self.publishForModePeriodicAggregation(subscriber_topic)
                 print(publish_contents)
-            elif (subscriber_topic.control_mode == "Periodic_Dynamic"):
+            elif (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_PERIODIC + self.common_strings.STR_UNDER_BAR + self.common_strings.CONTROL_MODE_DYNAMIC):
                 publish_contents = self.publishForModePeriodicAndDynamic(subscriber_topic)
                 print(publish_contents)
 
