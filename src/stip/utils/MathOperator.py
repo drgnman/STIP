@@ -125,3 +125,10 @@ class MathOperator:
             return distance
         if (flag == "azimuth"):
             return azimuth
+
+    def estimateDestination(self, base_latitude, base_longitude, azimuth, distance):
+        grs80 = pyproj.Geod(ellps='GRS80')
+        destination_latitude, destination_longitude, back_azimuth = grs80.fwd(
+            base_latitude, base_longitude, azimuth, distance
+        )
+        return destination_latitude, destination_longitude
