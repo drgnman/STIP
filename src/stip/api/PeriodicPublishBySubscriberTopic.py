@@ -1,10 +1,10 @@
 from datetime import datetime
-from stip.api.Objects.Data import Data
+from stip.api.objects.Data import Data
 from stip.api import ProcedureProcessing
 from stip.utils.DBUtil import DBUtil
 from stip.api.PeriodicControl import PeriodicControl
 from stip.api.PublishControl import PublishControl
-from stip.api.Objects.SubscriberTopic import SubscriberTopic
+from stip.api.objects.SubscriberTopic import SubscriberTopic
 from stip.api.ProcedureProcessing import ProcedureProcessing
 from stip.utils.ProccessingSupports import ProcessingSupports
 

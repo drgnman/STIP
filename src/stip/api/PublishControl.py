@@ -4,8 +4,8 @@ from stip.utils.MathOperator import MathOperator
 from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.api.BaseTopicForDTOS import  BaseTopicForDTOS
 from stip.api.PublishToPlatforms import PublishToAMQP, PublishToMQTT
-from stip.api.Objects.SubscriberTopic import SubscriberTopic
-from stip.api.Objects.Subscriber import Subscriber
+from stip.api.objects.SubscriberTopic import SubscriberTopic
+from stip.api.objects.Subscriber import Subscriber
 from datetime import datetime
 
 class PublishControl:
