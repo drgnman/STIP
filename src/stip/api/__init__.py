@@ -70,7 +70,7 @@ def dataPost():
   data.element_values[common_strings.TOPIC_NAME] = data.topic_name
   result = publish_control.publishDirectly(data)
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
-  result =publish_control.publishByDynamicTopicOptimization(data)
+  result = publish_control.publishByDynamicTopicOptimization(data)
   if not result: return "Exeception Error! Publish Failed"
 
   # DATA_VALUESテーブルへの追加
