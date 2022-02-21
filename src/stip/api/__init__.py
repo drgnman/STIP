@@ -10,10 +10,10 @@ from flask_cors import CORS, cross_origin
 # import original moduels
 from stip import app
 # Class Object 
-from stip.api.Objects.Topic import Topic
-from stip.api.Objects.Data import Data
-from stip.api.Objects.Subscriber import Subscriber
-from stip.api.Objects.SubscriberTopic import SubscriberTopic
+from stip.api.objects.Topic import Topic
+from stip.api.objects.Data import Data
+from stip.api.objects.Subscriber import Subscriber
+from stip.api.objects.SubscriberTopic import SubscriberTopic
 # Processing Module
 from stip.api.TopicManagement import TopicManagement
 from stip.api.DataManagement import DataManagement
