@@ -1,5 +1,8 @@
+from stip.api.common.CommonStrings import CommonStrings
+
 class Subscriber:
     def __init__(self): 
+        self.common_strings = CommonStrings()
         self.subscriber_name = ''
         self.purpose = ''
         self.latitude = 0.0
@@ -16,25 +19,25 @@ class Subscriber:
         self.data_ttr = 0       # 秒単位
 
     def setParameters(self, subscriber):
-        self.subscriber_name = subscriber['SubscriberName']
-        self.purpose = subscriber['Purpose']
-        if ("Location" in subscriber):
-            self.latitude = subscriber['Location']['Latitude']
-            self.longitude = subscriber['Location']['Longitude']
-        if ("Speed" in subscriber):
-            self.speed = subscriber['Speed']
-        if ("Direction" in subscriber):
-            self.direction = subscriber['Direction']
+        self.subscriber_name = subscriber[self.common_strings.SUBSCRIBER_NAME]
+        self.purpose = subscriber[self.common_strings.PURPOSE]
+        if (self.common_strings.LOCATION in subscriber):
+            self.latitude = subscriber[self.common_strings.LOCATION][self.common_strings.LATITUDE]
+            self.longitude = subscriber[self.common_strings.LOCATION][self.common_stringsLONGITUDE]
+        if (self.common_strings.SPEED in subscriber):
+            self.speed = subscriber[self.common_strings.SPEED]
+        if (self.common_strings.DIRECTION in subscriber):
+            self.direction = subscriber[self.common_strings.DIRECTION]
         
     def setSubscriberTopicParameters(self, subscriber):
         # "登録用の"SubscriberTopic要素
-        self.topic_list = subscriber['TopicList']
-        if ("ReceiveFrequency" in subscriber):
-            self.receive_frequency = subscriber['ReceiveFrequency']
-        self.control_mode = subscriber['ControlMode']
-        if ("DetectionRange" in subscriber):
-            self.detection_range = subscriber['DetectionRange']
-        if ("MovingInformationList" in subscriber):
-            self.moving_information_list = subscriber['MovingInformationList']
-        if ("DataTTR" in subscriber):
-            self.data_ttr = subscriber['DataTTR']
+        self.topic_list = subscriber[self.common_strings.TOPIC_LIST]
+        if (self.common_strings.RECEIVE_FREQUENCY in subscriber):
+            self.receive_frequency = subscriber[self.common_strings.RECEIVE_FREQUENCY]
+        self.control_mode = subscriber[self.common_strings.CONTROL_MODE]
+        if ( in subscriber):
+            self.detection_range = subscriber[self.common_strings.DETECTION_RANGE]
+        if (self.common_strings.MOVING_INFORMATION_LIST in subscriber):
+            self.moving_information_list = subscriber[self.common_strings.MOVING_INFORMATION_LIST]
+        if (self.common_strings.DATA_TTR in subscriber):
+            self.data_ttr = subscriber[self.common_strings.DATA_TTR]

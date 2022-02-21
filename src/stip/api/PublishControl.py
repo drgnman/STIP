@@ -2,6 +2,7 @@ from stip.utils.DBUtil import DBUtil
 from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.utils.MathOperator import MathOperator
 from stip.utils.ProccessingSupports import ProcessingSupports
+from stip.api.common.CommonStrings import CommonStrings
 from stip.api.BaseTopicForDTOS import  BaseTopicForDTOS
 from stip.api.PublishToPlatforms import PublishToAMQP, PublishToMQTT
 from stip.api.objects.SubscriberTopic import SubscriberTopic
@@ -10,6 +11,7 @@ from datetime import datetime
 
 class PublishControl:
     def __init__(self):
+        self.common_strings = CommonStrings()
         self.math_operator = MathOperator()
         self.processing_supports = ProcessingSupports()
 
@@ -34,9 +36,9 @@ class PublishControl:
             return False
 
     def publishDirectly(self, data, iot_type="amqp"):
-        if (iot_type == "amqp"):
+        if (iot_type == self.common_strings.AMQP):
             return self.publishToAQMP(data)
-        elif (iot_type == "mqtt"):
+        elif (iot_type == self.common_strings.MQTT):
             return self.publishToMQTT(data)
     
     def publishByDynamicTopicOptimization(self, data):
@@ -56,7 +58,7 @@ class PublishControl:
         subscribers_distance_information_list = {} 
         for subscriber in all_subscribers:
             distance = self.math_operator.calculateGeoInformation(
-                base_topic.latitude, base_topic.longitude, subscriber[1], subscriber[2], "distance")
+                base_topic.latitude, base_topic.longitude, subscriber[1], subscriber[2], self.common_strings.GIS_DISTANCE)
             # effective_rangeよりもdetection_rengeに収まっているかどうかが大事
             subscribers_distance_information_list[subscriber[0]] = distance
         

@@ -1,7 +1,10 @@
 import ast
 
+from stip.api.common.CommonStrings import CommonStrings
+
 class SubscriberTopic:
     def __init__(self): 
+        self.common_strings = CommonStrings()
         self.subscriber_topic_name = ''
         self.topic_list = ''
         self.extracted_topic_list = ''
@@ -17,38 +20,38 @@ class SubscriberTopic:
         self.create_timestamp = ''
 
     def setParameters(self, subscriber_topic):
-        if ("SubscriberTopicName" in subscriber_topic):
-            self.subscriber_topic_name = subscriber_topic['SubscriberTopicName']
-        if ("TopicList" in subscriber_topic):
-            self.topic_list = subscriber_topic['TopicList']
-        if ("ExtractedTopicList" in subscriber_topic):
-            self.extracted_topic_list = subscriber_topic['ExtractedTopicList']
-        if ("ValueList" in subscriber_topic):
-            self.value_list = subscriber_topic['ValueList']
+        if (self.common_strings.SUBSCRIBER_TOPIC_NAME in subscriber_topic):
+            self.subscriber_topic_name = subscriber_topic[self.common_strings.SUBSCRIBER_TOPIC_NAME]
+        if (self.common_strings.TOPIC_LIST in subscriber_topic):
+            self.topic_list = subscriber_topic[self.common_strings.TOPIC_LIST]
+        if (self.common_strings.EXTRACTED_TOPIC_LIST in subscriber_topic):
+            self.extracted_topic_list = subscriber_topic[self.common_strings.EXTRACTED_TOPIC_LIST]
+        if (self.common_strings.VALUE_LIST in subscriber_topic):
+            self.value_list = subscriber_topic[self.common_strings.VALUE_LIST]
         if (self.value_list != None):
             self.value_list = ast.literal_eval(self.value_list)
-        if ("VariableList" in subscriber_topic):
-            self.variable_list = subscriber_topic['VariablaList']
+        if (self.common_strings.VARIABLE_LIST in subscriber_topic):
+            self.variable_list = subscriber_topic[self.common_strings.VARIABLE_LIST]
         if (self.variable_list != None):
             self.variable_list = ast.literal_eval(self.variable_list)
-        if ("ProcedureList" in subscriber_topic):
-            self.procedure_list = subscriber_topic['ProcedureList']
+        if (self.common_strings.PROCEDURE_LIST in subscriber_topic):
+            self.procedure_list = subscriber_topic[self.common_strings.PROCEDURE_LIST]
         if (self.procedure_list != None):
             self.procedure_list = ast.literal_eval(self.procedure_list)
-        if ("ControlMode" in subscriber_topic):
-            self.control_mode = subscriber_topic['ControlMode']
-        if ("ReceiveFrequency" in subscriber_topic):
-            self.receive_frequency = subscriber_topic['ReceiveFrequency']
-        if ("DataTTR" in subscriber_topic):
-            self.data_ttr = subscriber_topic['DataTTR']
-        if ("DetectionRange" in subscriber_topic):
-            self.detection_range = subscriber_topic['DetectionRange']
-        if ("MovingInformationList" in subscriber_topic):
-            self.moving_infomation_list = subscriber_topic['MovingInformationList']
-        if ("PublishTimestamp" in subscriber_topic):
-            self.publish_timestamp = subscriber_topic['PublishTimestamp']
-        if ("CreateTimestamp" in subscriber_topic):
-            self.create_timestamp = subscriber_topic['CreateTimestamp']
+        if (self.common_strings.CONTROL_MODE in subscriber_topic):
+            self.control_mode = subscriber_topic[self.common_strings.CONTROL_MODE]
+        if (self.common_strings.RECEIVE_FREQUENCY in subscriber_topic):
+            self.receive_frequency = subscriber_topic[self.common_strings.RECEIVE_FREQUENCY]
+        if (self.common_strings.DATA_TTR in subscriber_topic):
+            self.data_ttr = subscriber_topic[self.common_strings.DATA_TTR]
+        if (self.common_strings.DETECTION_RANGE in subscriber_topic):
+            self.detection_range = subscriber_topic[self.common_strings.DETECTION_RANGE]
+        if (self.common_strings.MOVING_INFORMATION_LIST in subscriber_topic):
+            self.moving_infomation_list = subscriber_topic[self.common_strings.MOVING_INFORMATION_LIST]
+        if (self.common_strings.PUBLISH_TIMESTAMP in subscriber_topic):
+            self.publish_timestamp = subscriber_topic[self.common_strings.PUBLISH_TIMESTAMP]
+        if (self.common_strings.CREATE_TIMESTAMP in subscriber_topic):
+            self.create_timestamp = subscriber_topic[self.common_strings.CREATE_TIMESTAMP]
 
     def setParameterFromList(self, subscriber_topic):
         self.subscriber_topic_name = subscriber_topic[0]

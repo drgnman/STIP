@@ -29,13 +29,13 @@ class PeriodicPublishBySubscriberTopic:
             publish_contents = {}
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
-            if (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_PERIODIC):
+            if (subscriber_topic.control_mode == self.common_strings.PERIODIC):
                 publish_contents = self.publishForModePeriodic(subscriber_topic)
                 print(publish_contents)
-            elif (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_AGGREGATION):
+            elif (subscriber_topic.control_mode == self.common_strings.AGGREGATION):
                 publish_contents = self.publishForModePeriodicAggregation(subscriber_topic)
                 print(publish_contents)
-            elif (subscriber_topic.control_mode == self.common_strings.CONTROL_MODE_PERIODIC + self.common_strings.STR_UNDER_BAR + self.common_strings.CONTROL_MODE_DYNAMIC):
+            elif (subscriber_topic.control_mode == self.common_strings.PERIODIC_AND_DYNAMIC):
                 publish_contents = self.publishForModePeriodicAndDynamic(subscriber_topic)
                 print(publish_contents)
 
@@ -78,9 +78,9 @@ class PeriodicPublishBySubscriberTopic:
     def publishForModePeriodicAggregation(self, subscriber_topic):
         publish_contents = {}
         for topic_name in subscriber_topic.procedure_list:
-            procedure = subscriber_topic.procedure_list[topic_name]['Procedure']
-            if ("VariableList" in subscriber_topic.procedure_list[topic_name]):
-                variable_list = subscriber_topic.procedure_list[topic_name]['VariableList']
+            procedure = subscriber_topic.procedure_list[topic_name][self.common_strings.PROCEDURE]
+            if (self.common_strings.VARIABLE_LIST in subscriber_topic.procedure_list[topic_name]):
+                variable_list = subscriber_topic.procedure_list[topic_name][self.common_strings.VARIABLE_LIST]
             operators = self.procedureProcessing.procedureSplit(procedure)
             for operator in operators:
                 # operatorを参考に計算する箇所の切り出し
@@ -88,7 +88,7 @@ class PeriodicPublishBySubscriberTopic:
                     operator, procedure
                     )
                 # 切り出した要素から計算及び，元テキスト書き換えのための要素取り出し
-                if (operator != "Hot"):
+                if (operator != self.common_strings.HOT):
                     rewrite_elements = self.procedureProcessing.splitEachElementFromTargetFormula(
                         target_formula, subscriber_topic.value_list)  # 要素数0~2の配列が返ってくる
                 else:

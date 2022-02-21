@@ -14,6 +14,7 @@ from stip.api.objects.Topic import Topic
 from stip.api.objects.Data import Data
 from stip.api.objects.Subscriber import Subscriber
 from stip.api.objects.SubscriberTopic import SubscriberTopic
+from stip.api.common.CommonStrings import CommonStrings
 # Processing Module
 from stip.api.TopicManagement import TopicManagement
 from stip.api.DataManagement import DataManagement
@@ -27,6 +28,7 @@ topic_management = TopicManagement()
 data_management = DataManagement()
 publish_control = PublishControl()
 subscriber_management = SubscriberManagement()
+common_strings = CommonStrings()
 
 
 @app.route('/')
@@ -36,7 +38,7 @@ def helloWorld():
 @app.route('/publish/create', methods=["POST"])
 def topicCeate():
   create_topic_request = request.get_json()
-  if not (create_topic_request.keys() >= {'Publisher', 'TopicName', 'Elements'}):
+  if not (create_topic_request.keys() >= {common_strings.PUBLISHER, common_strings.TOPIC_NAME, common_strings.ELEMENTS}):
     return 'Not Found Publisher or Topic or Elements'
 
   topic = Topic()
@@ -54,18 +56,18 @@ def topicCeate():
 @app.route('/publish/post', methods=['POST'])
 def dataPost():
   post_data = request.get_json()
-  if not (post_data.keys() >= {'Publisher', 'TopicName', 'Elements'}):
+  if not (post_data.keys() >= {common_strings.PUBLISHER, common_strings.TOPIC_NAME, common_strings.ELEMENTS}):
     return 'Not Found Publisher or Topic or Elements'
 
   # 送信先の対象トピックがstip上に存在するか確認する (TopicManagement.py)
-  if not (topic_management.topicExistCheck(post_data['TopicName'], post_data['Publisher'])):
+  if not (topic_management.topicExistCheck(post_data[common_strings.TOPIC_NAME], post_data[common_strings.PUBLISHER])):
     return "Does Not Exist Publisher or Target Topic!"
   
   data = Data()
   data.setParameters(post_data)
   # 最終的に送信する中身はelements_valueだけ(topicは宛先指定に使われる),
   # サブスクライバがなんのデータかわかるようにelements_valueにTopicNameデータを追加する
-  data.element_values["TopicName"] = data.topic_name
+  data.element_values[common_strings.TOPIC_NAME] = data.topic_name
   result = publish_control.publishDirectly(data)
   # 位置情報を用いる場合，ここで空間情報検索したものの送信を行う処理を書く (PublishControl.py)
   result =publish_control.publishByDynamicTopicOptimization(data)
@@ -85,7 +87,7 @@ def dataPost():
 def registerSubscriber():
   request_subscriber = request.get_json()
   # Subscriberとして最低限必要な要素のキーチェック
-  if not (request_subscriber.keys() >= {'SubscriberName', 'Purpose', 'ControlMode'}):
+  if not (request_subscriber.keys() >= {common_strings.SUBSCRIBER_NAME, common_strings.PURPOSE, common_strings.CONTROL_MODE}):
     return 'Not Found SubscriberName or Purpose'
   subscriber = Subscriber()
   # Subscriber情報の設定
