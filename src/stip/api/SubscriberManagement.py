@@ -86,8 +86,18 @@ class SubscriberManagement:
 
             for i in range(len(subscriber.moving_information_list)):
                 if (i+1 >= len(subscriber.moving_information_list)):
-                    break # ここブレイクでいいのか？
-                if (i==0):
+                    extracted_topic_list_parts = []
+                    for target_topic_name in subscriber.topic_list:
+                        for topic in pre_topic_list:
+                            result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
+                                target_topic_name, topic[0], latitude, longitude, float(topic[1]), float(topic[2]), subscriber.detection_range
+                            )
+                            if result:
+                                extracted_topic_list_parts.append(topic[0])
+                    extracted_topic_list_parts = list(dict.fromkeys(extracted_topic_list_parts))
+                    subscriber.extracted_topic_list.append(extracted_topic_list_parts)
+                    
+                elif (i==0):
                     latitude = subscriber.latitude
                     longitude = subscriber.longitude
                     point = subscriber.moving_information_list[i]
@@ -98,6 +108,7 @@ class SubscriberManagement:
                     latitude, longitude = point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
                     next_point = subscriber.moving_information_list[i+1]
                     next_latitude, next_longitude = next_point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+
                 latitude = float(latitude)
                 longitude = float(longitude) 
                 next_latitude = float(next_latitude)
@@ -106,15 +117,25 @@ class SubscriberManagement:
                 distance = math_operator.calculateGeoInformation(
                     latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_DISTANCE)
                 if (subscriber.detection_range < distance):
+                    extracted_topic_list_parts = []
                     tmp_latitude, tmp_longitude = 0.0, 0.0
                     latitude_over_flag, longitude_over_flag = False, False
                     while (not latitude_over_flag or not longitude_over_flag):
-                        azimuth = math_operator.calculateGeoInformation(
-                            latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_AZIMUTH 
-                        )
-                        tmp_latitude, tmp_longitude = math_operator.estimateDestination(
-                            latitude, longitude, azimuth, subscriber.detection_range
-                        )
+                        if (tmp_latitude > 0.0 and tmp_longitude > 0.0):
+                            azimuth = math_operator.calculateGeoInformation(
+                                tmp_latitude, tmp_longitude, next_latitude, next_longitude, self.common_strings.GIS_AZIMUTH 
+                            )
+                            tmp_latitude, tmp_longitude = math_operator.estimateDestination(
+                                tmp_latitude, tmp_longitude, azimuth, (subscriber.detection_range)
+                            )
+
+                        else:
+                            azimuth = math_operator.calculateGeoInformation(
+                                latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_AZIMUTH 
+                            )
+                            tmp_latitude, tmp_longitude = math_operator.estimateDestination(
+                                latitude, longitude, azimuth, subscriber.detection_range
+                            )
                         if (latitude < next_latitude):
                             # (current_x < tmp_x < destination_x)
                             # (destinaion_x < tmp_x)の時だけ，tmp_x = destination_xとする
@@ -140,17 +161,15 @@ class SubscriberManagement:
                         for target_topic_name in subscriber.topic_list:
                             for topic in pre_topic_list:
                                 result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
-                                    target_topic_name,
-                                    topic[0],
-                                    tmp_latitude,
-                                    tmp_longitude,
-                                    float(topic[1]),
-                                    float(topic[2]),
-                                    subscriber.detection_range
+                                    target_topic_name, topic[0], tmp_latitude, tmp_longitude, float(topic[1]), float(topic[2]), subscriber.detection_range
                                 )
                                 if result:
-                                    subscriber.extracted_topic_list.append(topic[0])
+                                    extracted_topic_list_parts.append(topic[0])
+                    extracted_topic_list_parts = list(dict.fromkeys(extracted_topic_list_parts))
+                    subscriber.extracted_topic_list.append(extracted_topic_list_parts)
+
                 else:
+                    extracted_topic_list_parts = []
                     for target_topic_name in subscriber.topic_list:
                         for topic in pre_topic_list:
                             result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
@@ -163,7 +182,9 @@ class SubscriberManagement:
                                 subscriber.detection_range
                             )
                             if result:
-                                subscriber.extracted_topic_list.append(topic[0])
+                                extracted_topic_list_parts.append(topic[0])
+                    extracted_topic_list_parts = list(dict.fromkeys(extracted_topic_list_parts))
+                    subscriber.extracted_topic_list.append(extracted_topic_list_parts)
 
                 sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                         (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
