@@ -66,11 +66,31 @@ class PeriodicPublishBySubscriberTopic:
             sql += 'TOPIC_NAME = {0}'.format(subscriber_topic.extracted_topic_list[i])
         result_set = self.db.fetchAllQuery(sql)
         # ここで対象外となるtopicの判定を行なって不要なものはextracted_topic_listから削除する
+        now_unixtime = datetime.now().timestamp()
+        start_unixtime = subscriber_topic.create_timestamp.timestamp()
+        elapsed_time = now_unixtime - start_unixtime
+        elapsed_duration = 0.0
+        sum_duration = 0.0
+        skip_counter = 0
+        # durationと経過時間を見てどこまでスキップするかを決める
+        for i in range(skip_counter, len(subscriber_topic.moving_information_list)):
+            elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION])
+            if (elapsed_duration > elapsed_time):
+                break
+            skip_counter += 1
         
-        # 送信対象の範囲を整理する(extracted_topic_list)から今回の送信で送る分を判断する
+        receive_frequency = subscriber_topic.receive_frequency.split()
+        receive_frequency = receive_frequency[0]
         publish_topic_list = []
-        publish_contents = self.getDataValueFromDatabaseByTopicList(publish_topic_list)
+        for i in range(len(subscriber_topic.moving_information_list)):
+            for topic_name in subscriber_topic.extracted_topic_list[i]:
+                publish_topic_list.append(topic_name)
+            sum_duration += subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION]
+            if (sum_duration > receive_frequency):
+                break
 
+        # 送信対象の範囲を整理する(extracted_topic_list)から今回の送信で送る分を判断する
+        publish_contents = self.getDataValueFromDatabaseByTopicList(publish_topic_list)
         return publish_contents
 
     # aggregationを用いた送信制御モード
