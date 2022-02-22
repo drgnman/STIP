@@ -35,7 +35,7 @@ class Subscriber:
         if (self.common_strings.RECEIVE_FREQUENCY in subscriber):
             self.receive_frequency = subscriber[self.common_strings.RECEIVE_FREQUENCY]
         self.control_mode = subscriber[self.common_strings.CONTROL_MODE]
-        if ( in subscriber):
+        if (self.common_strings.DETECTION_RANGE in subscriber):
             self.detection_range = subscriber[self.common_strings.DETECTION_RANGE]
         if (self.common_strings.MOVING_INFORMATION_LIST in subscriber):
             self.moving_information_list = subscriber[self.common_strings.MOVING_INFORMATION_LIST]
