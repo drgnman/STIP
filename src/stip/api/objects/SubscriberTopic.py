@@ -66,7 +66,7 @@ class SubscriberTopic:
         self.control_mode = subscriber_topic[5]     # 旧 PM_Flag
         self.receive_frequency = subscriber_topic[6]
         self.data_ttr = subscriber_topic[7]
-        self.detection_range = subscriber_topic[8]
-        self.publish_timestamp = subscriber_topic[9]
-        self.create_timestamp = subscriber_topic[10]
-        self.moving_infomation_list = subscriber_topic[11] # 仮置き
+        self.moving_infomation_list = subscriber_topic[8]
+        self.detection_range = subscriber_topic[9]
+        self.publish_timestamp = subscriber_topic[10]
+        self.create_timestamp = subscriber_topic[11]
