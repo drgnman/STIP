@@ -3,7 +3,7 @@ from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.utils.MathOperator import MathOperator
 from stip.utils.ProccessingSupports import ProcessingSupports
 from stip.api.common.CommonStrings import CommonStrings
-from stip.api.BaseTopicForDTOS import  BaseTopicForDTOS
+from stip.api.objects.BaseTopicForDTOS import  BaseTopicForDTOS
 from stip.api.PublishToPlatforms import PublishToAMQP, PublishToMQTT
 from stip.api.objects.SubscriberTopic import SubscriberTopic
 from stip.api.objects.Subscriber import Subscriber
