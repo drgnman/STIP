@@ -12,6 +12,7 @@ class Subscriber:
 
         # "登録用の"SubscriberTopic要素
         self.topic_list = {}
+        self.extracted_topic_list = []
         self.receive_frequency = ''
         self.control_mode = ''     # Database嬢はPM_FLAG ("Contronlの手段を管理する")
         self.detection_range = 0.0
@@ -23,7 +24,7 @@ class Subscriber:
         self.purpose = subscriber[self.common_strings.PURPOSE]
         if (self.common_strings.LOCATION in subscriber):
             self.latitude = subscriber[self.common_strings.LOCATION][self.common_strings.LATITUDE]
-            self.longitude = subscriber[self.common_strings.LOCATION][self.common_stringsLONGITUDE]
+            self.longitude = subscriber[self.common_strings.LOCATION][self.common_strings.LONGITUDE]
         if (self.common_strings.SPEED in subscriber):
             self.speed = subscriber[self.common_strings.SPEED]
         if (self.common_strings.DIRECTION in subscriber):
@@ -32,6 +33,8 @@ class Subscriber:
     def setSubscriberTopicParameters(self, subscriber):
         # "登録用の"SubscriberTopic要素
         self.topic_list = subscriber[self.common_strings.TOPIC_LIST]
+        if (self.common_strings.EXTRACTED_TOPIC_LIST in subscriber):
+            self.extracted_topic_list = subscriber[self.common_strings.EXTRACTED_TOPIC_LIST]
         if (self.common_strings.RECEIVE_FREQUENCY in subscriber):
             self.receive_frequency = subscriber[self.common_strings.RECEIVE_FREQUENCY]
         self.control_mode = subscriber[self.common_strings.CONTROL_MODE]
