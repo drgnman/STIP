@@ -35,7 +35,6 @@ class ProcessingSupports:
 
     def compareDistanceDuaringSubscriberAndTopic(self, target_topic_name, topic_name, base_latitude, base_longitude, latitude, longitude, detection_range):
         math_operator = MathOperator()
-        print(topic_name[topic_name.rfind("_"):])
         if(target_topic_name != topic_name[topic_name.rfind("_")+1:]):
             return False
         distance = math_operator.calculateGeoInformation(
