@@ -69,9 +69,7 @@ class PeriodicPublishBySubscriberTopic:
         now_unixtime = datetime.now().timestamp()
         start_unixtime = subscriber_topic.create_timestamp.timestamp()
         elapsed_time = now_unixtime - start_unixtime
-        elapsed_duration = 0.0
-        sum_duration = 0.0
-        skip_counter = 0
+        elapsed_duration, sum_duration, skip_counter = 0.0, 0.0, 0
         # durationと経過時間を見てどこまでスキップするかを決める
         for i in range(skip_counter, len(subscriber_topic.moving_information_list)):
             elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION])
