@@ -9,7 +9,7 @@ from stip.api.objects.SubscriberTopic import SubscriberTopic
 from stip.api.ProcedureProcessing import ProcedureProcessing
 from stip.utils.ProccessingSupports import ProcessingSupports
 
-class PeriodicPublishBySubscriberTopic:
+class PeriodicPublishBySubscriberTopicProcessing:
     def __init__(self):
         self.db = DBUtil()
         self.procedureProcessing = ProcedureProcessing()
