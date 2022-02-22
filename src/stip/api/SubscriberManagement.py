@@ -73,53 +73,97 @@ class SubscriberManagement:
         elif (subscriber.control_mode == self.common_strings.PERIODIC_AND_DYNAMIC):
             # extracted_topic_listに抽出したトピック群を追加する処理を追加する
             extracted_topic_list = []
-            latitude_list = []
-            longitude_list = []
             math_operator = MathOperator()
             processing_supports = ProcessingSupports()
+
+            # 名前から対象となるtopic群を取り出しておく
+            pre_topic_list = []
+            for topic in subscriber.topic_list:
+                sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE TOPIC_NAME LIKE "%\_{0}";'.format(topic)
+                result_set = db.fetchAllQuery(sql)
+                for result in result_set:
+                    pre_topic_list.append(result)
+
             for i in range(len(subscriber.moving_information_list)):
                 if (i+1 >= len(subscriber.moving_information_list)):
-                    break
-                point = subscriber.moving_information_list[i]
-                latitude, longitude = point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+                    break # ここブレイクでいいのか？
+                if (i==0):
+                    latitude = subscriber.latitude
+                    longitude = subscriber.longitude
+                    point = subscriber.moving_information_list[i]
+                    next_latitude, next_longitude = point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+
+                else:
+                    point = subscriber.moving_information_list[i]
+                    latitude, longitude = point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+                    next_point = subscriber.moving_information_list[i+1]
+                    next_latitude, next_longitude = next_point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
                 latitude = float(latitude)
                 longitude = float(longitude) 
-                next_point = subscriber.moving_information_list[i+1]
-                next_latitude, next_longitude = next_point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
                 next_latitude = float(next_latitude)
                 next_longitude = float(next_longitude) 
+
                 distance = math_operator.calculateGeoInformation(
                     latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_DISTANCE)
-                if (distance < subscriber.detection_range):
-                    pass
-                    # sqlを発行する
+                if (subscriber.detection_range < distance):
+                    tmp_latitude, tmp_longitude = 0.0, 0.0
+                    latitude_over_flag, longitude_over_flag = False, False
+                    while (not latitude_over_flag or not longitude_over_flag):
+                        azimuth = math_operator.calculateGeoInformation(
+                            latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_AZIMUTH 
+                        )
+                        tmp_latitude, tmp_longitude = math_operator.estimateDestination(
+                            latitude, longitude, azimuth, subscriber.detection_range
+                        )
+                        if (latitude < next_latitude):
+                            # (current_x < tmp_x < destination_x)
+                            # (destinaion_x < tmp_x)の時だけ，tmp_x = destination_xとする
+                            tmp_latitude = processing_supports.nextLatitudeLargerThanCurrentLatitude(tmp_latitude, next_latitude)
+                            latitude_over_flag = True
+                        else:
+                            # (destination_x < tmp_x < current_x)
+                            # (tmp_x < destinaion_x)の時だけ，tmp_x = destination_xとする
+                            tmp_latitude = processing_supports.nextLatitudeSmallerThanCurrentLatitude(tmp_latitude, next_latitude)
+                            latitude_over_flag = True
+                        # (current_y < destination_y)
+                        if (longitude < next_longitude):
+                            # (destination_y < tmp_y)の時だけ，tmp_y = destination_yとする
+                            tmp_longitude = processing_supports.nextLongitudeLagerThanCurrentLongitude(tmp_longitude, next_longitude)
+                            longitude_over_flag = True
+                        # (destination_y < current_y)
+                        else:
+                            # (tmp_y < destination_y)の時だけ，tmp_y = destination_yとする
+                            tmp_longitude = processing_supports.nextLongitudeSmallerThanCurrentLongitude(tmp_longitude, next_longitude)
+                            longitude_over_flag = True
+                        # detection処理
+                        # extracted_topic_listへの要素追加
+                        for target_topic_name in subscriber.topic_list:
+                            for topic in pre_topic_list:
+                                result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
+                                    target_topic_name,
+                                    topic[0],
+                                    tmp_latitude,
+                                    tmp_longitude,
+                                    float(topic[1]),
+                                    float(topic[2]),
+                                    subscriber.detection_range
+                                )
+                                if result:
+                                    subscriber.extracted_topic_list.append(topic[0])
                 else:
-                    azimuth = math_operator.calculateGeoInformation(
-                        latitude, longitude, next_latitude, next_longitude, self.common_strings.GIS_AZIMUTH 
-                    )
-                    tmp_latitude, tmp_longitude = math_operator.estimateDestination(
-                        latitude, longitude, azimuth, subscriber.detection_range
-                    )
-
-                if (latitude < next_latitude):
-                    # (current_x < tmp_x < destination_x)
-                    # (destinaion_x < tmp_x)の時だけ，tmp_x = destination_xとする
-                    tmp_latitude = processing_supports.nextLatitudeLargerThanCurrentLatitude(tmp_latitude, next_latitude)
-                else:
-                    # (destination_x < tmp_x < current_x)
-                    # (tmp_x < destinaion_x)の時だけ，tmp_x = destination_xとする
-                    tmp_latitude = processing_supports.nextLatitudeSmallerThanCurrentLatitude(tmp_latitude, next_latitude)
-                    # (current_y < destination_y)
-
-                if (longitude < next_longitude):
-                    # (destination_y < tmp_y)の時だけ，tmp_y = destination_yとする
-                    tmp_longitude = processing_supports.nextLongitudeLagerThanCurrentLongitude(tmp_longitude, next_longitude)
-                # (destination_y < current_y)
-                else:
-                    # (tmp_y < destination_y)の時だけ，tmp_y = destination_yとする
-                    tmp_longitude = processing_supports.nextLongitudeSmallerThanCurrentLongitude(tmp_longitude, next_longitude)
-
-                # detection処理を呼び出す
+                    for target_topic_name in subscriber.topic_list:
+                        for topic in pre_topic_list:
+                            result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
+                                target_topic_name,
+                                topic[0],
+                                latitude,
+                                longitude,
+                                float(topic[1]),
+                                float(topic[2]),
+                                subscriber.detection_range
+                            )
+                            if result:
+                                subscriber.extracted_topic_list.append(topic[0])
 
                 sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                         (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
@@ -135,7 +179,6 @@ class SubscriberManagement:
                             subscriber.detection_range
                         )
 
-        print(sql)
         result = db.executeQuery(sql)
         db.closeDBConnection()
         return result
