@@ -1,6 +1,9 @@
+from stip.utils.MathOperator import MathOperator
+from stip.api.common.CommonStrings import CommonStrings
+
 class ProcessingSupports:
     def __init__(self):
-        pass
+        self.common_strings = CommonStrings()
 
     # 現状のは作ってるだけだけど，複数箇所でDataBaseコンテンツの加工が必要になったらこれに切り替える
     def convertFromStrToList(self, str_list_contents):
@@ -29,4 +32,16 @@ class ProcessingSupports:
         if (base_longitude < longitude):
             return longitude
         return base_longitude
+
+    def compareDistanceDuaringSubscriberAndTopic(self, target_topic_name, topic_name, base_latitude, base_longitude, latitude, longitude, detection_range):
+        math_operator = MathOperator()
+        print(topic_name[topic_name.rfind("_"):])
+        if(target_topic_name != topic_name[topic_name.rfind("_")+1:]):
+            return False
+        distance = math_operator.calculateGeoInformation(
+            base_latitude, base_longitude, latitude, longitude, self.common_strings.GIS_DISTANCE)
+        if (distance < detection_range):
+            return True
+        return False
+                
     
