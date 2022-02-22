@@ -27,6 +27,8 @@ class PeriodicPublishBySubscriberTopicProcessing:
             subscriber_topic = SubscriberTopic()
             subscriber_topic.setParameterFromList(record)
             publish_contents = {}
+            if subscriber_topic.control_mode == self.common_strings.DYNAMIC:
+                continue
             if not (self.periodic_control.judgeToPublishTarget(subscriber_topic.receive_frequency, subscriber_topic.create_timestamp)):
                 continue
             if (subscriber_topic.control_mode == self.common_strings.PERIODIC):
@@ -61,9 +63,11 @@ class PeriodicPublishBySubscriberTopicProcessing:
         # 送信周期が一致しているものに対しての処理
         self.db.createDBConnection()
         sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE '
+        subscriber_topic.extracted_topic_list = self.processing_supports.convertFromStrToList(subscriber_topic.extracted_topic_list)
         for i in range(len(subscriber_topic.extracted_topic_list)):
+            print(subscriber_topic.extracted_topic_list[i])
             if (i>0): sql += ' or '
-            sql += 'TOPIC_NAME = {0}'.format(subscriber_topic.extracted_topic_list[i])
+            sql += 'TOPIC_NAME = "{0}"'.format(subscriber_topic.extracted_topic_list[i])
         result_set = self.db.fetchAllQuery(sql)
         # ここで対象外となるtopicの判定を行なって不要なものはextracted_topic_listから削除する
         now_unixtime = datetime.now().timestamp()
@@ -72,6 +76,7 @@ class PeriodicPublishBySubscriberTopicProcessing:
         elapsed_duration, sum_duration, skip_counter = 0.0, 0.0, 0
         # durationと経過時間を見てどこまでスキップするかを決める
         for i in range(skip_counter, len(subscriber_topic.moving_information_list)):
+            print(subscriber_topic.moving_information_list[i])
             elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION])
             if (elapsed_duration > elapsed_time):
                 break
