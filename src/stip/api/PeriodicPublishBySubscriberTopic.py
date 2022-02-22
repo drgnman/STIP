@@ -52,27 +52,26 @@ class PeriodicPublishBySubscriberTopic:
     def publishForModePeriodic(self, subscriber_topic):
         topic_list = subscriber_topic.topic_list[1:-1]
         topic_list = self.processing_supports.convertFromStrToList(topic_list)
-        publish_contents = {}
-        for topic_name in topic_list:
-            print(topic_name)
-            self.db.createDBConnection()
-            sql = 'SELECT TOPIC_NAME, ELEMENT_VALUE, PUBLISH_TIMESTAMP \
-                    FROM DATA_VALUE_TEMP WHERE TOPIC_NAME = "{0}" ORDER BY PUBLISH_TIMESTAMP DESC LIMIT 1;'.format(
-                        topic_name
-                    )
-            print(sql)
-            result_set = self.db.fetchAllQuery(sql)
-            print(result_set)
-            if (result_set != []):
-                publish_contents[topic_name] = result_set[0]
-        self.db.closeDBConnection()
+        publish_contents = self.getDataValueFromDatabaseByTopicList(topic_list)
         return publish_contents
         
 
     # 位置情報を用いた送信制御モード
-    def publishForModePeriodicAndDynamic(self, subscrbier_topic):
+    def publishForModePeriodicAndDynamic(self, subscriber_topic):
         # 送信周期が一致しているものに対しての処理
-        pass
+        self.db.createDBConnection()
+        sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE '
+        for i in range(len(subscriber_topic.extracted_topic_list)):
+            if (i>0): sql += ' or '
+            sql += 'TOPIC_NAME = {0}'.format(subscriber_topic.extracted_topic_list[i])
+        result_set = self.db.fetchAllQuery(sql)
+        # ここで対象外となるtopicの判定を行なって不要なものはextracted_topic_listから削除する
+        
+        # 送信対象の範囲を整理する(extracted_topic_list)から今回の送信で送る分を判断する
+        publish_topic_list = []
+        publish_contents = self.getDataValueFromDatabaseByTopicList(publish_topic_list)
+
+        return publish_contents
 
     # aggregationを用いた送信制御モード
     def publishForModePeriodicAggregation(self, subscriber_topic):
@@ -105,9 +104,24 @@ class PeriodicPublishBySubscriberTopic:
             publish_contents[topic_name] = [procedure, str(datetime.now())]
         return publish_contents
         
-        
-
     def rewriteProcedureByCulculatedResult(self, operator, procedure, target_formula, result):
         replace_target = "{0}({1})".format(operator, target_formula)
         # 文章と値をそれぞれ逆転文字列化して, 置き換えをした後にもう一度反転して元に戻す
         return procedure[::-1].replace(replace_target[::-1], str(result)[::-1], 1)[::-1]
+
+    def getDataValueFromDatabaseByTopicList(self, topic_list):
+        publish_contents = {}
+        self.db.createDBConnection()
+        for topic_name in topic_list:
+            print(topic_name)
+            sql = 'SELECT TOPIC_NAME, ELEMENT_VALUE, PUBLISH_TIMESTAMP \
+                    FROM DATA_VALUE_TEMP WHERE TOPIC_NAME = "{0}" ORDER BY PUBLISH_TIMESTAMP DESC LIMIT 1;'.format(
+                        topic_name
+                    )
+            print(sql)
+            result_set = self.db.fetchAllQuery(sql)
+            print(result_set)
+            if (result_set != []):
+                publish_contents[topic_name] = result_set[0]
+        self.db.closeDBConnection()
+        return publish_contents
