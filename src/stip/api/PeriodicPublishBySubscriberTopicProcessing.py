@@ -1,4 +1,6 @@
+import re
 from datetime import datetime
+import json
 from stip.api.objects.Data import Data
 from stip.api import ProcedureProcessing
 from stip.utils.DBUtil import DBUtil
@@ -61,38 +63,46 @@ class PeriodicPublishBySubscriberTopicProcessing:
     # 位置情報を用いた送信制御モード
     def publishForModePeriodicAndDynamic(self, subscriber_topic):
         # 送信周期が一致しているものに対しての処理
-        self.db.createDBConnection()
-        sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE '
-        subscriber_topic.extracted_topic_list = self.processing_supports.convertFromStrToList(subscriber_topic.extracted_topic_list)
-        for i in range(len(subscriber_topic.extracted_topic_list)):
-            print(subscriber_topic.extracted_topic_list[i])
-            if (i>0): sql += ' or '
-            sql += 'TOPIC_NAME = "{0}"'.format(subscriber_topic.extracted_topic_list[i])
-        result_set = self.db.fetchAllQuery(sql)
+        # self.db.createDBConnection()
+        # sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE '
+        # # subscriber_topic.extracted_topic_list = self.processing_supports.convertFromStrToList(subscriber_topic.extracted_topic_list)
+        # for i in range(len(subscriber_topic.extracted_topic_list)):
+            # print()
+            # if (i>0): sql += ' or '
+            # sql += 'TOPIC_NAME = "{0}"'.format(subscriber_topic.extracted_topic_list[i])
+        # result_set = self.db.fetchAllQuery(sql)
         # ここで対象外となるtopicの判定を行なって不要なものはextracted_topic_listから削除する
         now_unixtime = datetime.now().timestamp()
         start_unixtime = subscriber_topic.create_timestamp.timestamp()
         elapsed_time = now_unixtime - start_unixtime
         elapsed_duration, sum_duration, skip_counter = 0.0, 0.0, 0
         # durationと経過時間を見てどこまでスキップするかを決める
+        # subscriber_topic.moving_information_list = 
+        subscriber_topic.moving_information_list = json.loads(subscriber_topic.moving_information_list)
         for i in range(skip_counter, len(subscriber_topic.moving_information_list)):
-            print(subscriber_topic.moving_information_list[i])
             elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION])
             if (elapsed_duration > elapsed_time):
                 break
             skip_counter += 1
         
         receive_frequency = subscriber_topic.receive_frequency.split()
-        receive_frequency = receive_frequency[0]
+        receive_period = int(receive_frequency[0]) * 60
         publish_topic_list = []
+        organized_extracted_topic_list = subscriber_topic.extracted_topic_list.split("],")
+        for i in range(len(organized_extracted_topic_list)):
+            organized_extracted_topic_list[i] = organized_extracted_topic_list[i].replace("[", "").replace("]", "")
+            organized_extracted_topic_list[i] =organized_extracted_topic_list[i].split(",")
+
+        # subscriber_topic.extracted_topic_list 
         for i in range(len(subscriber_topic.moving_information_list)):
-            for topic_name in subscriber_topic.extracted_topic_list[i]:
+            for topic_name in organized_extracted_topic_list[i]:
                 publish_topic_list.append(topic_name)
             sum_duration += subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION]
-            if (sum_duration > receive_frequency):
+            if (sum_duration > receive_period):
                 break
 
         # 送信対象の範囲を整理する(extracted_topic_list)から今回の送信で送る分を判断する
+        publish_topic_list = list(dict.fromkeys(publish_topic_list))
         publish_contents = self.getDataValueFromDatabaseByTopicList(publish_topic_list)
         return publish_contents
 
