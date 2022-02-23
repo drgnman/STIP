@@ -12,10 +12,6 @@ class ProcessingSupports:
             str_list_contents = str_list_contents.replace("'", "")
         if(" " in str_list_contents):
             str_list_contents = str_list_contents.replace(" ", "")
-        if("[" in str_list_contents):
-            str_list_contents = str_list_contents.replace("[", "")
-        if("]" in str_list_contents):
-            str_list_contents = str_list_contents.replace("]", "")
         convert_to_list = str_list_contents.split(',')
         return convert_to_list
 
