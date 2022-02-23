@@ -12,7 +12,7 @@ class Subscriber:
 
         # "登録用の"SubscriberTopic要素
         self.topic_list = {}
-        self.extracted_topic_list = []
+        self.extracted_topic_list = ''
         self.receive_frequency = ''
         self.control_mode = ''     # Database嬢はPM_FLAG ("Contronlの手段を管理する")
         self.detection_range = 0.0
