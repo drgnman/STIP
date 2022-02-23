@@ -15,7 +15,7 @@ class SubscriberTopic:
         self.receive_frequency = ''
         self.data_ttr = 0
         self.detection_range = 0.0
-        self.moving_infomation_list = {}
+        self.moving_information_list = {}
         self.publish_timestamp = ''
         self.create_timestamp = ''
 
@@ -47,7 +47,7 @@ class SubscriberTopic:
         if (self.common_strings.DETECTION_RANGE in subscriber_topic):
             self.detection_range = subscriber_topic[self.common_strings.DETECTION_RANGE]
         if (self.common_strings.MOVING_INFORMATION_LIST in subscriber_topic):
-            self.moving_infomation_list = subscriber_topic[self.common_strings.MOVING_INFORMATION_LIST]
+            self.moving_information_list = subscriber_topic[self.common_strings.MOVING_INFORMATION_LIST]
         if (self.common_strings.PUBLISH_TIMESTAMP in subscriber_topic):
             self.publish_timestamp = subscriber_topic[self.common_strings.PUBLISH_TIMESTAMP]
         if (self.common_strings.CREATE_TIMESTAMP in subscriber_topic):
@@ -66,7 +66,7 @@ class SubscriberTopic:
         self.control_mode = subscriber_topic[5]     # 旧 PM_Flag
         self.receive_frequency = subscriber_topic[6]
         self.data_ttr = subscriber_topic[7]
-        self.moving_infomation_list = subscriber_topic[8]
+        self.moving_information_list = subscriber_topic[8]
         self.detection_range = subscriber_topic[9]
         self.publish_timestamp = subscriber_topic[10]
         self.create_timestamp = subscriber_topic[11]
