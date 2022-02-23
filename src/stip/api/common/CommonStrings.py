@@ -59,6 +59,7 @@ class CommonStrings:
 
         # 処理に関わる用語
         self.GEOMETORY = "Geometory"
+        self.DURATION = "Duration"
         self.LATLNG = "Latlng"
         self.DISTANCE = "Distance"
         self.DURATION = "Duration"
