@@ -100,7 +100,7 @@ class PublishControl:
     def publishWhenUpdateSubscriber(self, subscriber):
         db = DBUtil()
         db.createDBConnection()
-        sql = 'SELECT SUBSCRIBER_TOPIC, TOPIC_LIST, DETECTION_RANGE FROM SUBSCRIBER_TOPICS WHERE SUBSCRIBER_TOPIC LIKE "{0}\_%"'.format(subscriber)
+        sql = 'SELECT SUBSCRIBER_TOPIC, TOPIC_LIST, DETECTION_RANGE FROM SUBSCRIBER_TOPICS WHERE SUBSCRIBER_TOPIC LIKE "{0}\_%"'.format(subscriber.subscriber_name)
         subscriber_topic_list = db.fetchAllQuery(sql)
         publish_dataset = []
         for result in subscriber_topic_list:
@@ -112,30 +112,34 @@ class PublishControl:
             contents_list = []
             for topic in subscriber_topic.topic_list:
                 sql =  'SELECT TOPIC_NAME, LATITUDE, LONGITUDE, EFFECTIVE_RANGE, DATA_TTL FROM TOPIC WHERE TOPIC_NAME LIKE "%\_{0}" \
-                   HAVING (6371 * acos(cos(radians({1})) * cos(radians(LATITUDE)) * cos(radi ans(LONGITUDE) - radians({2})) + sin(radians({1})) * sin(radians(LATITUDE)))) <= {3}'.format(
-                       topic, subscriber.latitude, subscriber.longitude, subscriber.detection_range)
+                   HAVING (6371 * acos(cos(radians({1})) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians({2})) + sin(radians({1})) * sin(radians(LATITUDE)))) <= {3}'.format(
+                       topic, subscriber.latitude, subscriber.longitude, subscriber_topic.detection_range)
                 result_topic_list = db.fetchAllQuery(sql)
+                if (result_topic_list == []):
+                    continue
                 for result_topic in result_topic_list:
                     target_topic_list.append(result_topic)
         
+            # ここのfor文が間違っているのを直す
             for topic in target_topic_list:
-                if(type(topic) is tuple):
-                    topic = topic[0]
-                sql = 'SELECT TOPIC_NAME, ELEMENT_NAME, VALUE, PUBLISH_TIMESTAMP FROM DATA_VALUE WHERE TOPIC_NAME={0}'.format(topic) 
-                result = db.fetchAllQuery(sql)
-                result = result[0]
-                data_ttl = float(topic[4]) + result[3].timestamp()
+                sql = 'SELECT TOPIC_NAME, ELEMENT_NAME, VALUE, PUBLISH_TIMESTAMP FROM DATA_VALUE WHERE TOPIC_NAME="{0}"'.format(topic[0])
+                topic_index_result = db.fetchAllQuery(sql)
+                if (topic_index_result == []):
+                    continue
+                topic_index_result = topic_index_result[0]
+                data_ttl = float(topic[4]) + topic_index_result[3].timestamp()
                 data_part = {}
                 data_list = {}
-                if (',' in result[1]):
-                    elements_list = result[1].split(',')
-                    rawValue_list = result[2].split(',')
+                if (',' in topic_index_result[1]):
+                    elements_list = topic_index_result[1].split(',')
+                    rawValue_list = topic_index_result[2].split(',')
                     for i in range(0, len(elements_list)):
                         data_list[elements_list[i]] = rawValue_list[i]
                 else:
-                    data_list[result[1]] = result[2]
+                    data_list[topic_index_result[1]] = topic_index_result[2]
 
-                data_part = {self.common_strings.TOPIC: result[0], self.common_strings.ELEMENTS:{result[1]:result[2]}, self.common_strings.PUBLISH_TIMESTAMP:str(result[3]),
+                data_part = {self.common_strings.TOPIC: topic_index_result[0], self.common_strings.ELEMENTS:data_list, 
+                    self.common_strings.PUBLISH_TIMESTAMP:str(topic_index_result[3]),
                     self.common_strings.DATA_TTL: str(data_ttl), self.common_strings.EFFECTIVE_RANGE: str(topic[4]),
                     self.common_strings.LONGITUDE: topic[1], self.common_strings.LATITUDE: topic[2]}
                 contents_list.append(data_part)
@@ -146,4 +150,8 @@ class PublishControl:
             publish_dataset.append(data)
 
         for content in publish_dataset:
-            self.publishDirectly(content)
+            print("content: ", content.topic_name, content.element_values)
+            # resultがFalse帰ってきた場合，どうするか考えたほうがいい?
+            result = self.publishDirectly(content)
+
+        return True
