@@ -103,7 +103,19 @@ def registerSubscriber():
 
   return "Success"
 
+@app.route('/subscriber/upate', methods=['GET'])
+def updateSubscriber():
+  subscriber = Subscriber()
+  subscriber.subscriber_name = request.args.get(common_strings.SUBSCRIBER)
+  subscriber.latitude = request.args.get(common_strings.LATITUDE)
+  subscriber.longitude = request.args.get(common_strings.LONGITUDE)
+  subscriber.direction = request.args.get(common_strings.DIRECTION)
+  subscriber.speed = request.args.get(common_strings.SPEED)
 
-  # Subscriberの登録
+  result = subscriber_management.updateSubscriber(subscriber)
+  if not result: return "Failed! Subscrbier Cann't Update"
 
-  # Subscriber-topicの登録
+  result = publish_control.publishWhenUpdateSubscriber(subscriber)
+  if not result: return "Failed! Publish!"
+
+  return "Success"
