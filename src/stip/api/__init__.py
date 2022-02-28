@@ -103,14 +103,16 @@ def registerSubscriber():
 
   return "Success"
 
-@app.route('/subscriber/upate', methods=['GET'])
+@app.route('/subscriber/update', methods=['GET'])
 def updateSubscriber():
   subscriber = Subscriber()
   subscriber.subscriber_name = request.args.get(common_strings.SUBSCRIBER)
   subscriber.latitude = request.args.get(common_strings.LATITUDE)
   subscriber.longitude = request.args.get(common_strings.LONGITUDE)
-  subscriber.direction = request.args.get(common_strings.DIRECTION)
-  subscriber.speed = request.args.get(common_strings.SPEED)
+  if (common_strings.DIRECTION in request.args):
+    subscriber.direction = request.args.get(common_strings.DIRECTION)
+  if (common_strings.SPEED in request.args):
+    subscriber.speed = request.args.get(common_strings.SPEED)
 
   result = subscriber_management.updateSubscriber(subscriber)
   if not result: return "Failed! Subscrbier Cann't Update"
