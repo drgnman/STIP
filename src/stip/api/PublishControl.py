@@ -7,6 +7,7 @@ from stip.api.objects.BaseTopicForDTOS import  BaseTopicForDTOS
 from stip.api.PublishToPlatforms import PublishToAMQP, PublishToMQTT
 from stip.api.objects.SubscriberTopic import SubscriberTopic
 from stip.api.objects.Subscriber import Subscriber
+from stip.api.objects.Data import Data
 from datetime import datetime
 
 class PublishControl:
@@ -87,8 +88,7 @@ class PublishControl:
                         # 部分一致検索 topic名の末尾が種類を示すルールであることから，末尾から種類だけを切り取った 
                         elif (publish_topic_category in topic_list):
                             target_subscribers.append(result[0])
-
-        
+        db.closeDBConnection() 
         # print(target_subscribers)
         for target in target_subscribers:
             # 送信する先のtopic_name = Subscriber_topicを意味する
@@ -96,3 +96,54 @@ class PublishControl:
             self.publishDirectly(data)
         
         return True 
+
+    def publishWhenUpdateSubscriber(self, subscriber):
+        db = DBUtil()
+        db.createDBConnection()
+        sql = 'SELECT SUBSCRIBER_TOPIC, TOPIC_LIST, DETECTION_RANGE FROM SUBSCRIBER_TOPICS WHERE SUBSCRIBER_TOPIC LIKE "{0}\_%"'.format(subscriber)
+        subscriber_topic_list = db.fetchAllQuery(sql)
+        publish_dataset = []
+        for result in subscriber_topic_list:
+            subscriber_topic = SubscriberTopic()
+            subscriber_topic.subscriber_topic_name = result[0]
+            subscriber_topic.topic_list = self.processing_supports.convertFromStrToList(result[1][1:-1])
+            subscriber_topic.detection_range = result[2]
+            target_topic_list = []
+            contents_list = []
+            for topic in subscriber_topic.topic_list:
+                sql =  'SELECT TOPIC_NAME, LATITUDE, LONGITUDE, EFFECTIVE_RANGE, DATA_TTL FROM TOPIC WHERE TOPIC_NAME LIKE "%\_{0}" \
+                   HAVING (6371 * acos(cos(radians({1})) * cos(radians(LATITUDE)) * cos(radi ans(LONGITUDE) - radians({2})) + sin(radians({1})) * sin(radians(LATITUDE)))) <= {3}'.format(
+                       topic, subscriber.latitude, subscriber.longitude, subscriber.detection_range)
+                result_topic_list = db.fetchAllQuery(sql)
+                for result_topic in result_topic_list:
+                    target_topic_list.append(result_topic)
+        
+            for topic in target_topic_list:
+                if(type(topic) is tuple):
+                    topic = topic[0]
+                sql = 'SELECT TOPIC_NAME, ELEMENT_NAME, VALUE, PUBLISH_TIMESTAMP FROM DATA_VALUE WHERE TOPIC_NAME={0}'.format(topic) 
+                result = db.fetchAllQuery(sql)
+                result = result[0]
+                data_ttl = float(topic[4]) + result[3].timestamp()
+                data_part = {}
+                data_list = {}
+                if (',' in result[1]):
+                    elements_list = result[1].split(',')
+                    rawValue_list = result[2].split(',')
+                    for i in range(0, len(elements_list)):
+                        data_list[elements_list[i]] = rawValue_list[i]
+                else:
+                    data_list[result[1]] = result[2]
+
+                data_part = {self.common_strings.TOPIC: result[0], self.common_strings.ELEMENTS:{result[1]:result[2]}, self.common_strings.PUBLISH_TIMESTAMP:str(result[3]),
+                    self.common_strings.DATA_TTL: str(data_ttl), self.common_strings.EFFECTIVE_RANGE: str(topic[4]),
+                    self.common_strings.LONGITUDE: topic[1], self.common_strings.LATITUDE: topic[2]}
+                contents_list.append(data_part)
+
+            data = Data()
+            data.topic_name = subscriber_topic.subscriber_topic_name
+            data.element_values = contents_list
+            publish_dataset.append(data)
+
+        for content in publish_dataset:
+            self.publishDirectly(content)
