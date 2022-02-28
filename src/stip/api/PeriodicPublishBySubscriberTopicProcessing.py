@@ -63,19 +63,10 @@ class PeriodicPublishBySubscriberTopicProcessing:
     # 位置情報を用いた送信制御モード
     def publishForModePeriodicAndDynamic(self, subscriber_topic):
         # 送信周期が一致しているものに対しての処理
-        # self.db.createDBConnection()
-        # sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE '
-        # # subscriber_topic.extracted_topic_list = self.processing_supports.convertFromStrToList(subscriber_topic.extracted_topic_list)
-        # for i in range(len(subscriber_topic.extracted_topic_list)):
-            # print()
-            # if (i>0): sql += ' or '
-            # sql += 'TOPIC_NAME = "{0}"'.format(subscriber_topic.extracted_topic_list[i])
-        # result_set = self.db.fetchAllQuery(sql)
-        # ここで対象外となるtopicの判定を行なって不要なものはextracted_topic_listから削除する
         now_unixtime = datetime.now().timestamp()
         start_unixtime = subscriber_topic.create_timestamp.timestamp()
         elapsed_time = now_unixtime - start_unixtime
-        elapsed_duration, sum_duration, skip_counter = 0.0, 0.0, 0
+        elapsed_duration, sum_duration, skip_counter = 0.0, 0.0, 0 # (単位は秒の前提)
         # durationと経過時間を見てどこまでスキップするかを決める
         # subscriber_topic.moving_information_list = 
         subscriber_topic.moving_information_list = json.loads(subscriber_topic.moving_information_list)
