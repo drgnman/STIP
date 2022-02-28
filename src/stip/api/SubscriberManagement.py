@@ -198,3 +198,12 @@ class SubscriberManagement:
         result = db.executeQuery(sql)
         db.closeDBConnection()
         return result
+
+    def updateSubscriber(self, subscriber):
+        db = DBUtil()
+        db.createDBConnection()
+        sql = 'UPDATE SUBSCRIBERS SET LATITUDE = "{1}", LONGITUDE = "{2}", SPEED = "{3}", DIRECTION = "{4}" WHERE SUBSCRIBER = "{0}";'.format(
+            subscriber.subscriber_name, subscriber.latitude, subscriber.longitude, subscriber.speed, subscriber.direction)
+        result = db.executeQuery(sql)
+        db.closeDBConnection()
+        return result
