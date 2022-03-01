@@ -121,3 +121,19 @@ def updateSubscriber():
   if not result: return "Failed! Publish!"
 
   return "Success"
+
+@app.route('/subscriber/delete', methods=["GET"])
+def deleteSubscriber():
+  result = subscriber_management.deleteSubscriberTopic(request.args.get(common_strings.SUBSCRIBER_NAME))
+  if not result: return "Failed! SubscrbierTopic Cann't Delete"
+  result = subscriber_management.deleteSubscriber(request.args.get(common_strings.SUBSCRIBER_NAME))
+  if not result: return "Failed! Subscrbier Cann't Delete"
+
+  return "Success"
+
+@app.route('/subscriber-topic/delete', methods=["GET"])
+def deleteSubscriberTOpic():
+  result = subscriber_management.deleteSubscriberTopic('', request.args.get(common_strings.SUBSCRIBER_TOPIC_NAME))
+  if not result: return "Failed! SubscrbierTopic Cann't Delete"
+
+  return "Success"
