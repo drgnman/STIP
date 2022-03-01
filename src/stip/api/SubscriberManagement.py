@@ -207,3 +207,22 @@ class SubscriberManagement:
         result = db.executeQuery(sql)
         db.closeDBConnection()
         return result
+
+    def deleteSubscriber(self, subscriber_name):
+        db = DBUtil()
+        db.createDBConnection()
+        sql = 'DELETE FROM SUBSCRIBERS WHERE SUBSCRIBER = "{0}"'.format(subscriber_name)
+        result = db.executeQuery(sql)
+        db.closeDBConnection()
+        return result
+
+    def deleteSubscriberTopic(self, subscriber_name='', subscriber_topic_name =''):
+        db = DBUtil()
+        db.createDBConnection()
+        if (subscriber_topic_name != ''):
+            sql = 'DELETE FROM SUBSCRIBER_TOPICS WHERE SUBSCRIBER_TOPIC = "{0}"'.format(subscriber_topic_name)
+        else:
+            sql = 'DELETE FROM SUBSCRIBER_TOPICS WHERE SUBSCRIBER_TOPIC LIKE "{0}%"'.format(subscriber_name)
+        result = db.executeQuery(sql)
+        db.closeDBConnection()
+        return result
