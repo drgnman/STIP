@@ -93,10 +93,10 @@ class SubscriberManagement:
 
                 else:
                     point = subscriber.moving_information_list[i]
-                    latitude, longitude = point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+                    latitude, longitude = point[self.common_strings.WAYPOINT][self.common_strings.LATLNG].split(',')
                     next_point = subscriber.moving_information_list[i+1]
 
-                next_latitude, next_longitude = next_point[self.common_strings.GEOMETORY][self.common_strings.LATLNG].split(',')
+                next_latitude, next_longitude = next_point[self.common_strings.WAYPOINT][self.common_strings.LATLNG].split(',')
                 latitude, longitude, next_latitude, next_longitude = float(latitude), float(longitude), float(next_latitude), float(next_longitude) 
 
 

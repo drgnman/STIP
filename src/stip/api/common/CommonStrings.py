@@ -58,7 +58,7 @@ class CommonStrings:
         self.CREATE_TIMESTAMP = "CreateTimestamp"
 
         # 処理に関わる用語
-        self.GEOMETORY = "Geometory"
+        self.WAYPOINT = "Waypoint" # 旧Geometory -> Waypointに変更
         self.DURATION = "Duration"
         self.LATLNG = "Latlng"
         self.DISTANCE = "Distance"

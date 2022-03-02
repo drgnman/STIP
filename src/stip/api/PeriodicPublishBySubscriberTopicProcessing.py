@@ -71,7 +71,7 @@ class PeriodicPublishBySubscriberTopicProcessing:
         # subscriber_topic.moving_information_list = 
         subscriber_topic.moving_information_list = json.loads(subscriber_topic.moving_information_list)
         for i in range(skip_counter, len(subscriber_topic.moving_information_list)):
-            elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION])
+            elapsed_duration += float(subscriber_topic.moving_information_list[i][self.common_strings.WAYPOINT][self.common_strings.DURATION])
             if (elapsed_duration > elapsed_time):
                 break
             skip_counter += 1
@@ -88,7 +88,7 @@ class PeriodicPublishBySubscriberTopicProcessing:
         for i in range(len(subscriber_topic.moving_information_list)):
             for topic_name in organized_extracted_topic_list[i]:
                 publish_topic_list.append(topic_name)
-            sum_duration += subscriber_topic.moving_information_list[i][self.common_strings.GEOMETORY][self.common_strings.DURATION]
+            sum_duration += subscriber_topic.moving_information_list[i][self.common_strings.WAYPOINT][self.common_strings.DURATION]
             if (sum_duration > receive_period):
                 break
 
