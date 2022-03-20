@@ -40,7 +40,8 @@ class Subscriber:
         self.control_mode = subscriber[self.common_strings.CONTROL_MODE]
         if (self.common_strings.DETECTION_RANGE in subscriber):
             self.detection_range = subscriber[self.common_strings.DETECTION_RANGE]
-        if (self.common_strings.MOVING_INFORMATION_LIST in subscriber):
-            self.moving_information_list = subscriber[self.common_strings.MOVING_INFORMATION_LIST]
+        if (self.common_strings.LOCATION in subscriber): # check "Location": {"Latitude": , "Longitude": , "MovingInformationList": }
+            if (self.common_strings.MOVING_INFORMATION_LIST in subscriber[self.common_strings.LOCATION]):
+                self.moving_information_list = subscriber[self.common_strings.LOCATION][self.common_strings.MOVING_INFORMATION_LIST]
         if (self.common_strings.DATA_TTR in subscriber):
             self.data_ttr = subscriber[self.common_strings.DATA_TTR]
