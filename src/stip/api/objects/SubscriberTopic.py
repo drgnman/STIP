@@ -30,14 +30,15 @@ class SubscriberTopic:
             self.value_list = subscriber_topic[self.common_strings.VALUE_LIST]
         if (self.value_list != None):
             self.value_list = ast.literal_eval(self.value_list)
-        if (self.common_strings.VARIABLE_LIST in subscriber_topic):
-            self.variable_list = subscriber_topic[self.common_strings.VARIABLE_LIST]
-        if (self.variable_list != None):
-            self.variable_list = ast.literal_eval(self.variable_list)
-        if (self.common_strings.PROCEDURE_LIST in subscriber_topic):
-            self.procedure_list = subscriber_topic[self.common_strings.PROCEDURE_LIST]
-        if (self.procedure_list != None):
-            self.procedure_list = ast.literal_eval(self.procedure_list)
+        if (self.common_strings.TOPIC_LIST in subscriber_topic):
+            if (self.common_strings.VARIABLE_LIST in subscriber_topic[self.common_strings.TOPIC_LIST]):
+                self.variable_list = subscriber_topic[self.common_strings.TOPIC_LIST][self.common_strings.VARIABLE_LIST]
+            if (self.variable_list != None):
+                self.variable_list = ast.literal_eval(self.variable_list)
+            if (self.common_strings.PROCEDURE_LIST in subscriber_topic[self.common_strings.TOPIC_LIST]):
+                self.procedure_list = subscriber_topic[self.common_strings.TOPIC_LIST][self.common_strings.PROCEDURE_LIST]
+            if (self.procedure_list != None):
+                self.procedure_list = ast.literal_eval(self.procedure_list)
         if (self.common_strings.CONTROL_MODE in subscriber_topic):
             self.control_mode = subscriber_topic[self.common_strings.CONTROL_MODE]
         if (self.common_strings.RECEIVE_FREQUENCY in subscriber_topic):
@@ -46,8 +47,9 @@ class SubscriberTopic:
             self.data_ttr = subscriber_topic[self.common_strings.DATA_TTR]
         if (self.common_strings.DETECTION_RANGE in subscriber_topic):
             self.detection_range = subscriber_topic[self.common_strings.DETECTION_RANGE]
-        if (self.common_strings.MOVING_INFORMATION_LIST in subscriber_topic):
-            self.moving_information_list = subscriber_topic[self.common_strings.MOVING_INFORMATION_LIST]
+        if (self.common_strings.LOCATION in subscriber_topic): # check "Location": {"Latitude": , "Longitude": , "MovingInformationList": }
+            if (self.common_strings.MOVING_INFORMATION_LIST in subscriber_topic[self.common_strings.LOCATION]):
+                self.moving_information_list = subscriber_topic[self.common_strings.LOCATION][self.common_strings.MOVING_INFORMATION_LIST]
         if (self.common_strings.PUBLISH_TIMESTAMP in subscriber_topic):
             self.publish_timestamp = subscriber_topic[self.common_strings.PUBLISH_TIMESTAMP]
         if (self.common_strings.CREATE_TIMESTAMP in subscriber_topic):
