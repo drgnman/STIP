@@ -25,6 +25,7 @@ class PeriodicPublishBySubscriberTopicProcessing:
         sql = 'SELECT * FROM SUBSCRIBER_TOPICS;'
         all_subscriber_topic_list = self.db.fetchAllQuery(sql)
         self.db.closeDBConnection()
+        result = None
         for record in all_subscriber_topic_list:
             subscriber_topic = SubscriberTopic()
             subscriber_topic.setParameterFromList(record)
