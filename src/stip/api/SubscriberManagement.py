@@ -126,23 +126,19 @@ class SubscriberManagement:
                             if (latitude < next_latitude):
                                 # (current_x < tmp_x < destination_x)
                                 # (destinaion_x < tmp_x)の時だけ，tmp_x = destination_xとする
-                                tmp_latitude = processing_supports.nextLatitudeLargerThanCurrentLatitude(tmp_latitude, next_latitude)
-                                latitude_over_flag = True
+                                tmp_latitude, latitude_over_flag = processing_supports.nextLatitudeLargerThanCurrentLatitude(tmp_latitude, next_latitude)
                             else:
                                 # (destination_x < tmp_x < current_x)
                                 # (tmp_x < destinaion_x)の時だけ，tmp_x = destination_xとする
-                                tmp_latitude = processing_supports.nextLatitudeSmallerThanCurrentLatitude(tmp_latitude, next_latitude)
-                                latitude_over_flag = True
+                                tmp_latitude, latitude_over_flag = processing_supports.nextLatitudeSmallerThanCurrentLatitude(tmp_latitude, next_latitude)
                             # (current_y < destination_y)
                             if (longitude < next_longitude):
                                 # (destination_y < tmp_y)の時だけ，tmp_y = destination_yとする
-                                tmp_longitude = processing_supports.nextLongitudeLagerThanCurrentLongitude(tmp_longitude, next_longitude)
-                                longitude_over_flag = True
+                                tmp_longitude, longitude_over_flag = processing_supports.nextLongitudeLagerThanCurrentLongitude(tmp_longitude, next_longitude)
                             # (destination_y < current_y)
                             else:
                                 # (tmp_y < destination_y)の時だけ，tmp_y = destination_yとする
-                                tmp_longitude = processing_supports.nextLongitudeSmallerThanCurrentLongitude(tmp_longitude, next_longitude)
-                                longitude_over_flag = True
+                                tmp_longitude, longitude_over_flag = processing_supports.nextLongitudeSmallerThanCurrentLongitude(tmp_longitude, next_longitude)
                             # detection処理
                             # extracted_topic_listへの要素追加
                             for target_topic_name in subscriber.topic_list:
