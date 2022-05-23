@@ -83,6 +83,7 @@ class SubscriberManagement:
                 for result in result_set:
                     pre_topic_list.append(result)
 
+            ### Automatic Topic Selection ### 
             for i in range(len(subscriber.moving_information_list)):
                 if (i==0):
                     latitude, longitude = subscriber.latitude, subscriber.longitude
@@ -176,6 +177,7 @@ class SubscriberManagement:
                     subscriber.extracted_topic_list += extracted_topic_list_parts
 
             print(subscriber.extracted_topic_list)
+            ### Automatic Topic Selection ### 
 
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                     (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
