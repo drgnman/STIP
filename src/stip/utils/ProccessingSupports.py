@@ -17,23 +17,23 @@ class ProcessingSupports:
 
     def nextLatitudeLargerThanCurrentLatitude(self, base_latitude, latitude):
         if (latitude < base_latitude):
-            return latitude
-        return base_latitude
+            return latitude, True
+        return base_latitude, False
 
     def nextLatitudeSmallerThanCurrentLatitude(self, base_latitude, latitude):
         if (base_latitude < latitude):
-            return latitude
-        return base_latitude
+            return latitude, True
+        return base_latitude, False
 
     def nextLongitudeLagerThanCurrentLongitude(self, base_longitude, longitude):
         if (longitude < base_longitude):
-            return longitude
-        return base_longitude
+            return longitude, True
+        return base_longitude, False
 
     def nextLongitudeSmallerThanCurrentLongitude(self, base_longitude, longitude):
         if (base_longitude < longitude):
-            return longitude
-        return base_longitude
+            return longitude, True
+        return base_longitude, False
 
     def compareDistanceDuaringSubscriberAndTopic(self, target_topic_name, topic_name, base_latitude, base_longitude, latitude, longitude, detection_range):
         math_operator = MathOperator()
