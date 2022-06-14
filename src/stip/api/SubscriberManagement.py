@@ -58,6 +58,26 @@ class SubscriberManagement:
                     )
 
         elif (subscriber.control_mode == self.common_strings.DYNAMIC):
+            # 名前から対象となるtopic群を取り出しておく
+            processing_supports = ProcessingSupports()
+            pre_topic_list = []
+            extracted_topic_list_parts = []
+            for topic in subscriber.topic_list:
+                sql = 'SELECT TOPIC_NAME, LATITUDE, LONGITUDE FROM TOPIC WHERE TOPIC_NAME LIKE "%\_{0}";'.format(topic)
+                result_set = db.fetchAllQuery(sql)
+                for result in result_set:
+                    pre_topic_list.append(result)
+            for target_topic_name in subscriber.topic_list:
+                for topic in pre_topic_list:
+                    result = processing_supports.compareDistanceDuaringSubscriberAndTopic(
+                        target_topic_name, topic[0], subscriber.latitude, subscriber.longitude, float(topic[1]), float(topic[2]), subscriber.detection_range
+                    )
+                    if result:
+                        extracted_topic_list_parts.append(topic[0])
+            # extracted_topic_list_parts = list(dict.fromkeys(extracted_topic_list_parts))
+            # extracted_topic_list_parts = "["+",".join(map(str, extracted_topic_list_parts))+"]"
+            subscriber.extracted_topic_list = extracted_topic_list_parts
+
             # それ以外の場合にはDetectionRangeも設定
             sql = 'INSERT IGNORE INTO SUBSCRIBER_TOPICS \
                     (SUBSCRIBER_TOPIC, TOPIC_LIST, EXTRACTED_TOPIC_LIST, \
@@ -65,7 +85,7 @@ class SubscriberManagement:
                     ("{0}", "{1}", "{2}" , "{3}", "{4}");'.format(
                         subscriber.subscriber_name + "_" + subscriber.purpose, 
                         subscriber.topic_list,
-                        '',
+                        subscriber.extracted_topic_list,
                         subscriber.control_mode,
                         subscriber.detection_range
                     )
