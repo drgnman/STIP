@@ -16,7 +16,7 @@ class PublishControl:
         self.math_operator = MathOperator()
         self.processing_supports = ProcessingSupports()
 
-    def publishToAQMP(self, data):
+    def publishToAMQP(self, data):
         try:
             publish_to_amqp = PublishToAMQP()
             connection, channel = publish_to_amqp.createConnection()
@@ -38,10 +38,11 @@ class PublishControl:
 
     def publishDirectly(self, data, iot_type="amqp"):
         if (iot_type == self.common_strings.AMQP):
-            return self.publishToAQMP(data)
+            return self.publishToAMQP(data)
         elif (iot_type == self.common_strings.MQTT):
             return self.publishToMQTT(data)
     
+### データ送信時に都度対象となるサブスクライバトピック検索を行うDynamicTopicOptimization ### 
     def publishByDynamicTopicOptimization(self, data):
         db = DBUtil()
         db.createDBConnection()
@@ -90,12 +91,48 @@ class PublishControl:
                             target_subscribers.append(result[0])
         db.closeDBConnection() 
         # print(target_subscribers)
+        publish_data = Data()
         for target in target_subscribers:
             # 送信する先のtopic_name = Subscriber_topicを意味する
-            data.topic_name = target
+            publish_data.publisher = data.publisher
+            publish_data.topic_name = target
+            publish_data.element_values = data.element_values
+            self.publishDirectly(publish_data)
+            # data.topic_name = target
             self.publishDirectly(data)
         
         return True 
+
+### Extract_topic_listを活用するDynamicTopicOptimization ###
+#     def publishByDynamicTopicOptimization(self, data):
+#         db = DBUtil()
+#         db.createDBConnection()
+#         target_subscribers = []
+#         print(data.topic_name)
+#         # subscriber名の部分一致とPM_FLAG == "Dynamic" 
+#         # distance < detection_rangeを条件にSELECTクエリを発行すればいいのでは？
+#         sql = 'SELECT SUBSCRIBER_TOPIC FROM SUBSCRIBER_TOPICS WHERE \
+#                EXTRACTED_TOPIC_LIST LIKE "%{0}%";'.format(
+#                 data.topic_name
+#                 )
+#         result_set = db.fetchAllQuery(sql)
+#         if result_set != []:
+#             if (len(result_set) > 0):
+#                 for result in result_set:
+#                     result = list(result)
+#                     # 送信先としてここで必要なのはSubscriber-topic名だけ
+#                     target_subscribers.append(result[0])
+#         db.closeDBConnection() 
+#         print(target_subscribers)
+#         publish_data = Data()
+#         for target in target_subscribers:
+#             # 送信する先のtopic_name = Subscriber_topicを意味する
+#             publish_data.publisher = data.publisher
+#             publish_data.topic_name = target
+#             publish_data.element_values = data.element_values
+#             self.publishDirectly(publish_data)
+#         
+#         return True 
 
     def publishWhenUpdateSubscriber(self, subscriber):
         db = DBUtil()
@@ -144,10 +181,10 @@ class PublishControl:
                     self.common_strings.LONGITUDE: topic[1], self.common_strings.LATITUDE: topic[2]}
                 contents_list.append(data_part)
 
-            data = Data()
-            data.topic_name = subscriber_topic.subscriber_topic_name
-            data.element_values = contents_list
-            publish_dataset.append(data)
+            publish_data = Data()
+            publish_data.topic_name = subscriber_topic.subscriber_topic_name
+            publish_data.element_values = contents_list
+            publish_dataset.append(publish_data)
 
         for content in publish_dataset:
             print("content: ", content.topic_name, content.element_values)
